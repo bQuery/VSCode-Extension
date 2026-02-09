@@ -1,0 +1,64 @@
+import * as assert from 'assert';
+import * as vscode from 'vscode';
+
+suite('bQuery Extension Test Suite', () => {
+  test('Extension should be present', () => {
+    const extension = vscode.extensions.getExtension('bquery.bquery');
+    assert.ok(extension, 'Extension should be available');
+  });
+
+  test('Extension should activate', async () => {
+    const extension = vscode.extensions.getExtension('bquery.bquery');
+    if (extension && !extension.isActive) {
+      await extension.activate();
+    }
+    assert.ok(extension?.isActive, 'Extension should be active');
+  });
+
+  test('Snippets should be registered for TypeScript', () => {
+    const extension = vscode.extensions.getExtension('bquery.bquery');
+    assert.ok(extension);
+    const snippets = extension.packageJSON.contributes?.snippets;
+    assert.ok(Array.isArray(snippets), 'Snippets should be an array');
+    const tsSnippet = snippets.find(
+      (s: { language: string }) => s.language === 'typescript'
+    );
+    assert.ok(tsSnippet, 'Should have TypeScript snippets');
+  });
+
+  test('Snippets should be registered for HTML', () => {
+    const extension = vscode.extensions.getExtension('bquery.bquery');
+    assert.ok(extension);
+    const snippets = extension.packageJSON.contributes?.snippets;
+    const htmlSnippet = snippets.find(
+      (s: { language: string }) => s.language === 'html'
+    );
+    assert.ok(htmlSnippet, 'Should have HTML snippets');
+  });
+
+  test('HTML completion provider should provide bq directives', async () => {
+    const doc = await vscode.workspace.openTextDocument({
+      language: 'html',
+      content: '<div b',
+    });
+    const editor = await vscode.window.showTextDocument(doc);
+    const position = new vscode.Position(0, 6);
+
+    const completions = await vscode.commands.executeCommand<vscode.CompletionList>(
+      'vscode.executeCompletionItemProvider',
+      doc.uri,
+      position
+    );
+
+    assert.ok(completions, 'Should return completions');
+    // Check that at least some bq- directives are present
+    const bqItems = completions.items.filter((item) =>
+      typeof item.label === 'string'
+        ? item.label.startsWith('bq-')
+        : item.label.label.startsWith('bq-')
+    );
+    assert.ok(bqItems.length > 0, 'Should include bq-* directive completions');
+
+    await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
+  });
+});

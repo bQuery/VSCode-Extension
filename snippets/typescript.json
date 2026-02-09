@@ -1,0 +1,280 @@
+{
+  "bQuery Component": {
+    "prefix": "bq-component",
+    "body": [
+      "import { component, html } from '@bquery/bquery/component';",
+      "",
+      "component('${1:my-component}', {",
+      "  props: {",
+      "    ${2:name}: { type: ${3|String,Number,Boolean,Object,Array|}, required: ${4|true,false|} }",
+      "  },",
+      "  connected() {",
+      "    ${5:// component mounted}",
+      "  },",
+      "  render({ props }) {",
+      "    return html\\`<div>${6:\\${props.${2:name}}}</div>\\`;",
+      "  },",
+      "});"
+    ],
+    "description": "Create a bQuery web component with props and render function"
+  },
+  "bQuery Define Component": {
+    "prefix": "bq-define-component",
+    "body": [
+      "import { defineComponent, html } from '@bquery/bquery/component';",
+      "",
+      "const ${1:MyComponent} = defineComponent('${2:my-component}', {",
+      "  props: {",
+      "    ${3:name}: { type: ${4|String,Number,Boolean,Object,Array|}, required: ${5|true,false|} }",
+      "  },",
+      "  render: ({ props }) => html\\`<div>${6:\\${props.${3:name}}}</div>\\`,",
+      "});",
+      "",
+      "customElements.define('${2:my-component}', ${1:MyComponent});"
+    ],
+    "description": "Create a bQuery component class with defineComponent"
+  },
+  "bQuery Component with State": {
+    "prefix": "bq-component-state",
+    "body": [
+      "import { component, html } from '@bquery/bquery/component';",
+      "",
+      "component('${1:my-component}', {",
+      "  props: {",
+      "    ${2:name}: { type: ${3|String,Number,Boolean|}, required: ${4|true,false|} }",
+      "  },",
+      "  state: {",
+      "    ${5:count}: ${6:0}",
+      "  },",
+      "  connected() {",
+      "    ${7:// component mounted}",
+      "  },",
+      "  disconnected() {",
+      "    ${8:// component unmounted}",
+      "  },",
+      "  render({ props, state, emit }) {",
+      "    return html\\`",
+      "      <div>",
+      "        <p>${9:\\${props.${2:name}}}</p>",
+      "        <p>\\${state.${5:count}}</p>",
+      "      </div>",
+      "    \\`;",
+      "  },",
+      "});"
+    ],
+    "description": "Create a bQuery component with state, props, and lifecycle hooks"
+  },
+  "bQuery Router": {
+    "prefix": "bq-router",
+    "body": [
+      "import { createRouter, navigate, currentRoute } from '@bquery/bquery/router';",
+      "",
+      "const router = createRouter({",
+      "  routes: [",
+      "    { path: '/', name: '${1:home}', component: ${2:HomePage} },",
+      "    { path: '${3:/about}', name: '${4:about}', component: ${5:AboutPage} },",
+      "    { path: '*', component: ${6:NotFound} }",
+      "  ],",
+      "});"
+    ],
+    "description": "Create a bQuery SPA router with route definitions"
+  },
+  "bQuery Route Definition": {
+    "prefix": "bq-route",
+    "body": [
+      "{ path: '${1:/path}', name: '${2:name}', component: ${3:Component} }"
+    ],
+    "description": "Add a bQuery route definition"
+  },
+  "bQuery Route with Params": {
+    "prefix": "bq-route-params",
+    "body": [
+      "{ path: '${1:/user/:id}', name: '${2:user}', component: ${3:UserPage} }"
+    ],
+    "description": "Add a bQuery route definition with params"
+  },
+  "bQuery Navigation Guard": {
+    "prefix": "bq-guard",
+    "body": [
+      "router.beforeEach(async (to, from) => {",
+      "  if (${1:to.path === '/admin'} && !${2:isAuthenticated()}) {",
+      "    await navigate('${3:/login}');",
+      "    return false;",
+      "  }",
+      "});"
+    ],
+    "description": "Add a bQuery navigation guard"
+  },
+  "bQuery Navigate": {
+    "prefix": "bq-navigate",
+    "body": [
+      "await navigate('${1:/path}');"
+    ],
+    "description": "Navigate to a path using bQuery router"
+  },
+  "bQuery Mount View": {
+    "prefix": "bq-mount",
+    "body": [
+      "import { mount } from '@bquery/bquery/view';",
+      "import { signal } from '@bquery/bquery/reactive';",
+      "",
+      "const ${1:count} = signal(${2:0});",
+      "",
+      "const app = mount('${3:#app}', {",
+      "  ${1:count},",
+      "  ${4:increment}: () => ${1:count}.value++,",
+      "});"
+    ],
+    "description": "Mount a bQuery reactive view with signals"
+  },
+  "bQuery Signal": {
+    "prefix": "bq-signal",
+    "body": [
+      "const ${1:name} = signal(${2:initialValue});"
+    ],
+    "description": "Create a bQuery reactive signal"
+  },
+  "bQuery Computed": {
+    "prefix": "bq-computed",
+    "body": [
+      "const ${1:name} = computed(() => ${2:expression});"
+    ],
+    "description": "Create a bQuery computed signal"
+  },
+  "bQuery Effect": {
+    "prefix": "bq-effect",
+    "body": [
+      "effect(() => {",
+      "  ${1:// reactive side effect}",
+      "});"
+    ],
+    "description": "Create a bQuery reactive effect"
+  },
+  "bQuery Watch": {
+    "prefix": "bq-watch",
+    "body": [
+      "const stop = watch(${1:source}, (newVal, oldVal) => {",
+      "  ${2:// handle change}",
+      "});"
+    ],
+    "description": "Watch a bQuery signal for changes"
+  },
+  "bQuery Store": {
+    "prefix": "bq-store",
+    "body": [
+      "import { createStore } from '@bquery/bquery/store';",
+      "",
+      "const ${1:store} = createStore({",
+      "  id: '${2:myStore}',",
+      "  state: () => ({",
+      "    ${3:count}: ${4:0}",
+      "  }),",
+      "  getters: {",
+      "    ${5:doubled}: (state) => state.${3:count} * 2",
+      "  },",
+      "  actions: {",
+      "    ${6:increment}() {",
+      "      this.${3:count}++;",
+      "    }",
+      "  },",
+      "});"
+    ],
+    "description": "Create a bQuery state store"
+  },
+  "bQuery Define Store": {
+    "prefix": "bq-define-store",
+    "body": [
+      "import { defineStore } from '@bquery/bquery/store';",
+      "",
+      "const ${1:useStore} = defineStore('${2:storeName}', {",
+      "  state: () => ({",
+      "    ${3:count}: ${4:0}",
+      "  }),",
+      "  getters: {",
+      "    ${5:doubled}: (state) => state.${3:count} * 2",
+      "  },",
+      "  actions: {",
+      "    ${6:increment}() {",
+      "      this.${3:count}++;",
+      "    }",
+      "  },",
+      "});"
+    ],
+    "description": "Create a bQuery factory-style store definition"
+  },
+  "bQuery Import Component": {
+    "prefix": "bq-import-component",
+    "body": [
+      "import { component, defineComponent, html } from '@bquery/bquery/component';"
+    ],
+    "description": "Import bQuery component module"
+  },
+  "bQuery Import Router": {
+    "prefix": "bq-import-router",
+    "body": [
+      "import { createRouter, navigate, currentRoute } from '@bquery/bquery/router';"
+    ],
+    "description": "Import bQuery router module"
+  },
+  "bQuery Import View": {
+    "prefix": "bq-import-view",
+    "body": [
+      "import { mount, createTemplate } from '@bquery/bquery/view';"
+    ],
+    "description": "Import bQuery view module"
+  },
+  "bQuery Import Reactive": {
+    "prefix": "bq-import-reactive",
+    "body": [
+      "import { signal, computed, effect, batch, watch, readonly } from '@bquery/bquery/reactive';"
+    ],
+    "description": "Import bQuery reactive module"
+  },
+  "bQuery Import Store": {
+    "prefix": "bq-import-store",
+    "body": [
+      "import { createStore, defineStore } from '@bquery/bquery/store';"
+    ],
+    "description": "Import bQuery store module"
+  },
+  "bQuery Import Core": {
+    "prefix": "bq-import-core",
+    "body": [
+      "import { $, $$ } from '@bquery/bquery/core';"
+    ],
+    "description": "Import bQuery core selectors"
+  },
+  "bQuery Import Motion": {
+    "prefix": "bq-import-motion",
+    "body": [
+      "import { transition, spring, animate, timeline } from '@bquery/bquery/motion';"
+    ],
+    "description": "Import bQuery motion module"
+  },
+  "bQuery Linked Signal": {
+    "prefix": "bq-linked-signal",
+    "body": [
+      "const ${1:name} = linkedSignal(",
+      "  () => ${2:derivedExpression},",
+      "  (next) => {",
+      "    ${3:// write-back logic}",
+      "  }",
+      ");"
+    ],
+    "description": "Create a bQuery writable computed (linked signal)"
+  },
+  "bQuery Persisted Store": {
+    "prefix": "bq-persisted-store",
+    "body": [
+      "import { createPersistedStore } from '@bquery/bquery/store';",
+      "",
+      "const ${1:store} = createPersistedStore({",
+      "  id: '${2:settings}',",
+      "  state: () => ({",
+      "    ${3:theme}: '${4:dark}'",
+      "  }),",
+      "});"
+    ],
+    "description": "Create a bQuery persisted store (localStorage)"
+  }
+}

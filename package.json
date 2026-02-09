@@ -1,0 +1,68 @@
+{
+  "name": "bquery",
+  "displayName": "bQuery",
+  "description": "A VSCode Extension to improve the developer experience when working with @bquery/bquery, especially the component, router and view system.",
+  "version": "0.1.0",
+  "publisher": "bquery",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bQuery/VSCode-Extension.git"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Snippets",
+    "Programming Languages",
+    "Other"
+  ],
+  "keywords": [
+    "bquery",
+    "bQuery",
+    "web components",
+    "signals",
+    "reactive",
+    "dom",
+    "router",
+    "view"
+  ],
+  "activationEvents": [
+    "onLanguage:typescript",
+    "onLanguage:javascript",
+    "onLanguage:html"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "snippets": [
+      {
+        "language": "typescript",
+        "path": "./snippets/typescript.json"
+      },
+      {
+        "language": "javascript",
+        "path": "./snippets/typescript.json"
+      },
+      {
+        "language": "html",
+        "path": "./snippets/html.json"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^22.15.21",
+    "@types/vscode": "^1.85.0",
+    "@vscode/test-electron": "^2.5.2",
+    "eslint": "^9.27.0",
+    "mocha": "^11.5.0",
+    "typescript": "^5.8.3"
+  }
+}
