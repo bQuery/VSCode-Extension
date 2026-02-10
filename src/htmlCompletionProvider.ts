@@ -89,9 +89,10 @@ export function registerHtmlCompletionProvider(context: vscode.ExtensionContext)
         document: vscode.TextDocument,
         position: vscode.Position
       ): vscode.CompletionItem[] {
-        // Use document text from start to cursor for multi-line tag detection
+        // Scan document text up to cursor for multi-line tag detection (limit to 500 lines for performance)
+        const startLine = Math.max(0, position.line - 500);
         const textUpToCursor = document.getText(
-          new vscode.Range(new vscode.Position(0, 0), position)
+          new vscode.Range(new vscode.Position(startLine, 0), position)
         );
 
         // Only provide completions when typing inside an HTML tag
