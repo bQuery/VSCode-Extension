@@ -113,8 +113,11 @@ export function registerHtmlCompletionProvider(context: vscode.ExtensionContext)
           );
 
           if (directive.hasModifier) {
-            // For directives like bq-on:click, insert with colon and trigger suggest
             item.insertText = new vscode.SnippetString(`${directive.name}:\${1:event}="\${2:handler}"`);
+            item.command = {
+              command: 'editor.action.triggerSuggest',
+              title: 'Trigger Suggest',
+            };
           } else {
             item.insertText = new vscode.SnippetString(`${directive.name}="\${1:}"`);
           }

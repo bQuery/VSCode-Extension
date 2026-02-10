@@ -220,34 +220,48 @@ export function registerTsCompletionProvider(context: vscode.ExtensionContext): 
 }
 
 /**
- * Basic heuristic to detect if cursor is inside a string literal or line comment.
+ * Basic heuristic to detect if cursor is inside a string literal, line comment, or block comment.
  */
 function isInsideStringOrComment(text: string): boolean {
-  // Check for line comment
-  const commentIndex = text.indexOf('//');
-  if (commentIndex !== -1) {
-    // Check the // isn't inside a string
-    const beforeComment = text.substring(0, commentIndex);
-    const singleQuotes = (beforeComment.match(/'/g) || []).length;
-    const doubleQuotes = (beforeComment.match(/"/g) || []).length;
-    const backticks = (beforeComment.match(/`/g) || []).length;
-    if (singleQuotes % 2 === 0 && doubleQuotes % 2 === 0 && backticks % 2 === 0) {
-      return true;
-    }
-  }
-
-  // Check for unclosed string
   let inString: string | null = null;
+  let inBlockComment = false;
+
   for (let i = 0; i < text.length; i++) {
     const ch = text[i];
+    const next = text[i + 1];
+
+    if (inBlockComment) {
+      if (ch === '*' && next === '/') {
+        inBlockComment = false;
+        i++; // skip '/'
+      }
+      continue;
+    }
+
     if (inString) {
       if (ch === inString && text[i - 1] !== '\\') {
         inString = null;
       }
-    } else if (ch === "'" || ch === '"' || ch === '`') {
+      continue;
+    }
+
+    // Line comment (not inside a string)
+    if (ch === '/' && next === '/') {
+      return true;
+    }
+
+    // Block comment start
+    if (ch === '/' && next === '*') {
+      inBlockComment = true;
+      i++; // skip '*'
+      continue;
+    }
+
+    // String start
+    if (ch === "'" || ch === '"' || ch === '`') {
       inString = ch;
     }
   }
 
-  return inString !== null;
+  return inString !== null || inBlockComment;
 }

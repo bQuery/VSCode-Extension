@@ -111,4 +111,54 @@ suite('bQuery Extension Test Suite', () => {
 
     await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
   });
+
+  test('TS completion provider should not provide completions inside line comments', async () => {
+    const doc = await vscode.workspace.openTextDocument({
+      language: 'typescript',
+      content: '// bq',
+    });
+    await vscode.window.showTextDocument(doc);
+    const position = new vscode.Position(0, doc.lineAt(0).text.length);
+
+    const completions = await vscode.commands.executeCommand<vscode.CompletionList>(
+      'vscode.executeCompletionItemProvider',
+      doc.uri,
+      position
+    );
+
+    assert.ok(completions, 'Should return completions');
+    const bqItems = completions.items.filter((item) =>
+      typeof item.label === 'string'
+        ? item.detail?.startsWith('bQuery:')
+        : false
+    );
+    assert.strictEqual(bqItems.length, 0, 'Should not include bQuery completions inside line comments');
+
+    await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
+  });
+
+  test('TS completion provider should not provide completions inside block comments', async () => {
+    const doc = await vscode.workspace.openTextDocument({
+      language: 'typescript',
+      content: '/* bq',
+    });
+    await vscode.window.showTextDocument(doc);
+    const position = new vscode.Position(0, doc.lineAt(0).text.length);
+
+    const completions = await vscode.commands.executeCommand<vscode.CompletionList>(
+      'vscode.executeCompletionItemProvider',
+      doc.uri,
+      position
+    );
+
+    assert.ok(completions, 'Should return completions');
+    const bqItems = completions.items.filter((item) =>
+      typeof item.label === 'string'
+        ? item.detail?.startsWith('bQuery:')
+        : false
+    );
+    assert.strictEqual(bqItems.length, 0, 'Should not include bQuery completions inside block comments');
+
+    await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
+  });
 });
