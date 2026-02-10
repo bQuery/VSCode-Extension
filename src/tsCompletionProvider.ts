@@ -187,15 +187,19 @@ export function registerTsCompletionProvider(context: vscode.ExtensionContext): 
         document: vscode.TextDocument,
         position: vscode.Position
       ): vscode.CompletionItem[] {
-        const lineText = document.lineAt(position).text;
-        const textBeforeCursor = lineText.substring(0, position.character);
+        // Use document text from start to cursor for multi-line context detection
+        const textUpToCursor = document.getText(
+          new vscode.Range(new vscode.Position(0, 0), position)
+        );
 
         // Don't provide completions inside strings or comments
-        if (isInsideStringOrComment(textBeforeCursor)) {
+        if (isInsideStringOrComment(textUpToCursor)) {
           return [];
         }
 
         // Only provide completions when the user has typed a "bq" prefix
+        const lineText = document.lineAt(position).text;
+        const textBeforeCursor = lineText.substring(0, position.character);
         const prefixMatch = textBeforeCursor.match(/\bbq\w*$/i);
         if (!prefixMatch) {
           return [];

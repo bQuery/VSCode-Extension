@@ -89,17 +89,19 @@ export function registerHtmlCompletionProvider(context: vscode.ExtensionContext)
         document: vscode.TextDocument,
         position: vscode.Position
       ): vscode.CompletionItem[] {
-        const lineText = document.lineAt(position).text;
-        const textBeforeCursor = lineText.substring(0, position.character);
+        // Use document text from start to cursor for multi-line tag detection
+        const textUpToCursor = document.getText(
+          new vscode.Range(new vscode.Position(0, 0), position)
+        );
 
         // Only provide completions when typing inside an HTML tag
-        const insideTag = isInsideHtmlTag(textBeforeCursor);
+        const insideTag = isInsideHtmlTag(textUpToCursor);
         if (!insideTag) {
           return [];
         }
 
         // Only offer completions when the attribute prefix looks like a bQuery directive
-        const attrMatch = textBeforeCursor.match(/[\s<]([^\s=<>"']*)$/);
+        const attrMatch = textUpToCursor.match(/[\s<]([^\s=<>"']*)$/);
         const attrPrefix = attrMatch ? attrMatch[1] : '';
         const lowerPrefix = attrPrefix.toLowerCase();
         if (lowerPrefix !== 'b' && lowerPrefix !== 'bq' && !lowerPrefix.startsWith('bq-')) {
