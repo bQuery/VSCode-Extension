@@ -94,6 +94,14 @@ export function registerHtmlCompletionProvider(context: vscode.ExtensionContext)
           return [];
         }
 
+        // Only offer completions when the attribute prefix looks like a bQuery directive
+        const attrMatch = textBeforeCursor.match(/[\s<]([^\s=<>"']*)$/);
+        const attrPrefix = attrMatch ? attrMatch[1] : '';
+        const lowerPrefix = attrPrefix.toLowerCase();
+        if (lowerPrefix !== 'b' && lowerPrefix !== 'bq' && !lowerPrefix.startsWith('bq-')) {
+          return [];
+        }
+
         return BQ_DIRECTIVES.map((directive) => {
           const item = new vscode.CompletionItem(
             directive.name,

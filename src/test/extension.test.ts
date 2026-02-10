@@ -93,7 +93,7 @@ suite('bQuery Extension Test Suite', () => {
       content: "const x = 'bq",
     });
     await vscode.window.showTextDocument(doc);
-    const position = new vscode.Position(0, 14);
+    const position = new vscode.Position(0, doc.lineAt(0).text.length);
 
     const completions = await vscode.commands.executeCommand<vscode.CompletionList>(
       'vscode.executeCompletionItemProvider',
