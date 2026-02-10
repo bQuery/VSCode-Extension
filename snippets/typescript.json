@@ -12,7 +12,7 @@
       "    ${5:// component mounted}",
       "  },",
       "  render({ props }) {",
-      "    return html\\`<div>${6:\\${props.${2:name}}}</div>\\`;",
+      "    return html`<div>${6:\\${props.${2:name}}}</div>`;",
       "  },",
       "});"
     ],
@@ -27,7 +27,7 @@
       "  props: {",
       "    ${3:name}: { type: ${4|String,Number,Boolean,Object,Array|}, required: ${5|true,false|} }",
       "  },",
-      "  render: ({ props }) => html\\`<div>${6:\\${props.${3:name}}}</div>\\`,",
+      "  render: ({ props }) => html`<div>${6:\\${props.${3:name}}}</div>`,",
       "});",
       "",
       "customElements.define('${2:my-component}', ${1:MyComponent});"
@@ -53,12 +53,12 @@
       "    ${8:// component unmounted}",
       "  },",
       "  render({ props, state, emit }) {",
-      "    return html\\`",
+      "    return html`",
       "      <div>",
       "        <p>${9:\\${props.${2:name}}}</p>",
       "        <p>\\${state.${5:count}}</p>",
       "      </div>",
-      "    \\`;",
+      "    `;",
       "  },",
       "});"
     ],
