@@ -257,8 +257,9 @@ function isInsideStringOrComment(text: string): boolean {
       continue;
     }
 
-    // String start
-    if (ch === "'" || ch === '"' || ch === '`') {
+    // String start (single and double quotes only; template literals are excluded
+    // because completions inside template expression sections like `${bq}` are valid)
+    if (ch === "'" || ch === '"') {
       inString = ch;
     }
   }

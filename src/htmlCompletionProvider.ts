@@ -12,6 +12,8 @@ interface DirectiveInfo {
   example: string;
   /** Whether the directive takes a modifier after ':' (e.g. bq-on:click) */
   hasModifier?: boolean;
+  /** Placeholder name for the modifier (e.g. 'event' for bq-on, 'attr' for bq-bind) */
+  modifierPlaceholder?: string;
 }
 
 const BQ_DIRECTIVES: DirectiveInfo[] = [
@@ -50,6 +52,7 @@ const BQ_DIRECTIVES: DirectiveInfo[] = [
     description: 'Attaches an event listener. Use bq-on:event syntax (e.g. bq-on:click).',
     example: '<button bq-on:click="handleClick">Click</button>',
     hasModifier: true,
+    modifierPlaceholder: 'event',
   },
   {
     name: 'bq-class',
@@ -66,6 +69,7 @@ const BQ_DIRECTIVES: DirectiveInfo[] = [
     description: 'Binds an attribute value. Use bq-bind:attr syntax (e.g. bq-bind:href).',
     example: '<a bq-bind:href="url">Link</a>',
     hasModifier: true,
+    modifierPlaceholder: 'attr',
   },
   {
     name: 'bq-ref',
@@ -113,7 +117,8 @@ export function registerHtmlCompletionProvider(context: vscode.ExtensionContext)
           );
 
           if (directive.hasModifier) {
-            item.insertText = new vscode.SnippetString(`${directive.name}:\${1:event}="\${2:handler}"`);
+            const placeholder = directive.modifierPlaceholder || 'modifier';
+            item.insertText = new vscode.SnippetString(`${directive.name}:\${1:${placeholder}}="\${2:handler}"`);
             item.command = {
               command: 'editor.action.triggerSuggest',
               title: 'Trigger Suggest',

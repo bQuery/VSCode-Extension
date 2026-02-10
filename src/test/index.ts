@@ -25,6 +25,7 @@ export async function run(): Promise<void> {
   const testsRoot = path.resolve(__dirname, '.');
 
   const files = await collectTestFiles(testsRoot);
+  files.sort();
 
   files.forEach((f: string) => mocha.addFile(path.resolve(testsRoot, f)));
 
