@@ -62,6 +62,81 @@ suite('bQuery Extension Test Suite', () => {
     await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
   });
 
+  test('HTML completion provider should not provide bq directives inside closing tags', async () => {
+    const doc = await vscode.workspace.openTextDocument({
+      language: 'html',
+      content: '</div b',
+    });
+    await vscode.window.showTextDocument(doc);
+    const position = new vscode.Position(0, doc.lineAt(0).text.length);
+
+    const completions = await vscode.commands.executeCommand<vscode.CompletionList>(
+      'vscode.executeCompletionItemProvider',
+      doc.uri,
+      position
+    );
+
+    assert.ok(completions, 'Should return completions');
+    const bqItems = completions.items.filter((item) =>
+      typeof item.label === 'string'
+        ? item.label.startsWith('bq-')
+        : item.label.label.startsWith('bq-')
+    );
+    assert.strictEqual(bqItems.length, 0, 'Should not include bq-* directives inside closing tags');
+
+    await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
+  });
+
+  test('HTML completion provider should not provide bq directives inside HTML comments', async () => {
+    const doc = await vscode.workspace.openTextDocument({
+      language: 'html',
+      content: '<!-- <div b',
+    });
+    await vscode.window.showTextDocument(doc);
+    const position = new vscode.Position(0, doc.lineAt(0).text.length);
+
+    const completions = await vscode.commands.executeCommand<vscode.CompletionList>(
+      'vscode.executeCompletionItemProvider',
+      doc.uri,
+      position
+    );
+
+    assert.ok(completions, 'Should return completions');
+    const bqItems = completions.items.filter((item) =>
+      typeof item.label === 'string'
+        ? item.label.startsWith('bq-')
+        : item.label.label.startsWith('bq-')
+    );
+    assert.strictEqual(bqItems.length, 0, 'Should not include bq-* directives inside HTML comments');
+
+    await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
+  });
+
+  test('HTML completion provider should not provide bq directives in plain text outside tags', async () => {
+    const doc = await vscode.workspace.openTextDocument({
+      language: 'html',
+      content: 'some text bq',
+    });
+    await vscode.window.showTextDocument(doc);
+    const position = new vscode.Position(0, doc.lineAt(0).text.length);
+
+    const completions = await vscode.commands.executeCommand<vscode.CompletionList>(
+      'vscode.executeCompletionItemProvider',
+      doc.uri,
+      position
+    );
+
+    assert.ok(completions, 'Should return completions');
+    const bqItems = completions.items.filter((item) =>
+      typeof item.label === 'string'
+        ? item.label.startsWith('bq-')
+        : item.label.label.startsWith('bq-')
+    );
+    assert.strictEqual(bqItems.length, 0, 'Should not include bq-* directives outside of tags');
+
+    await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
+  });
+
   test('TS completion provider should provide bQuery API completions when bq prefix is typed', async () => {
     const doc = await vscode.workspace.openTextDocument({
       language: 'typescript',
