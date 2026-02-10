@@ -272,7 +272,7 @@ function isInsideStringOrComment(text: string): boolean {
         continue;
       }
       if (ch === '}') {
-        templateDepth--;
+        templateDepth = Math.max(0, templateDepth - 1);
         continue;
       }
     }
