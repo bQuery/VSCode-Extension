@@ -9,8 +9,6 @@ interface ApiCompletion {
   documentation: string;
   insertText: string;
   kind: vscode.CompletionItemKind;
-  /** Module path for auto-import suggestion */
-  module: string;
 }
 
 const BQ_API_COMPLETIONS: ApiCompletion[] = [
@@ -31,7 +29,6 @@ const BQ_API_COMPLETIONS: ApiCompletion[] = [
       '});',
     ].join('\n'),
     kind: vscode.CompletionItemKind.Function,
-    module: '@bquery/bquery/component',
   },
   {
     label: 'defineComponent',
@@ -45,7 +42,6 @@ const BQ_API_COMPLETIONS: ApiCompletion[] = [
       '});',
     ].join('\n'),
     kind: vscode.CompletionItemKind.Function,
-    module: '@bquery/bquery/component',
   },
   {
     label: 'html',
@@ -54,7 +50,6 @@ const BQ_API_COMPLETIONS: ApiCompletion[] = [
       "Tagged template literal for component rendering. Sanitizes interpolated values.\n\n**Module:** `@bquery/bquery/component`",
     insertText: 'html`${1:template}`',
     kind: vscode.CompletionItemKind.Function,
-    module: '@bquery/bquery/component',
   },
   // Router
   {
@@ -72,7 +67,6 @@ const BQ_API_COMPLETIONS: ApiCompletion[] = [
       '});',
     ].join('\n'),
     kind: vscode.CompletionItemKind.Function,
-    module: '@bquery/bquery/router',
   },
   {
     label: 'navigate',
@@ -81,7 +75,6 @@ const BQ_API_COMPLETIONS: ApiCompletion[] = [
       "Programmatically navigates to a URL path. Supports query params and replace mode.\n\n**Module:** `@bquery/bquery/router`",
     insertText: "await navigate('${1:/path}');",
     kind: vscode.CompletionItemKind.Function,
-    module: '@bquery/bquery/router',
   },
   {
     label: 'currentRoute',
@@ -90,7 +83,6 @@ const BQ_API_COMPLETIONS: ApiCompletion[] = [
       "A reactive signal containing the current route information (path, params, query, hash).\n\n**Module:** `@bquery/bquery/router`",
     insertText: 'currentRoute.value',
     kind: vscode.CompletionItemKind.Variable,
-    module: '@bquery/bquery/router',
   },
   // View
   {
@@ -105,7 +97,6 @@ const BQ_API_COMPLETIONS: ApiCompletion[] = [
       '});',
     ].join('\n'),
     kind: vscode.CompletionItemKind.Function,
-    module: '@bquery/bquery/view',
   },
   {
     label: 'createTemplate',
@@ -114,7 +105,6 @@ const BQ_API_COMPLETIONS: ApiCompletion[] = [
       "Creates a reusable template that can be mounted multiple times.\n\n**Module:** `@bquery/bquery/view`",
     insertText: "const template = createTemplate('${1:template-id}');",
     kind: vscode.CompletionItemKind.Function,
-    module: '@bquery/bquery/view',
   },
   // Reactive
   {
@@ -124,7 +114,6 @@ const BQ_API_COMPLETIONS: ApiCompletion[] = [
       "Creates a reactive signal with a `.value` property that triggers updates when changed.\n\n**Module:** `@bquery/bquery/reactive`",
     insertText: 'const ${1:name} = signal(${2:initialValue});',
     kind: vscode.CompletionItemKind.Function,
-    module: '@bquery/bquery/reactive',
   },
   {
     label: 'computed',
@@ -133,7 +122,6 @@ const BQ_API_COMPLETIONS: ApiCompletion[] = [
       "Creates a read-only signal derived from other signals.\n\n**Module:** `@bquery/bquery/reactive`",
     insertText: 'const ${1:name} = computed(() => ${2:expression});',
     kind: vscode.CompletionItemKind.Function,
-    module: '@bquery/bquery/reactive',
   },
   {
     label: 'effect',
@@ -142,7 +130,6 @@ const BQ_API_COMPLETIONS: ApiCompletion[] = [
       "Runs a function immediately and re-runs it whenever its signal dependencies change.\n\n**Module:** `@bquery/bquery/reactive`",
     insertText: ['effect(() => {', '  ${1:}', '});'].join('\n'),
     kind: vscode.CompletionItemKind.Function,
-    module: '@bquery/bquery/reactive',
   },
   {
     label: 'batch',
@@ -151,7 +138,6 @@ const BQ_API_COMPLETIONS: ApiCompletion[] = [
       "Groups multiple signal updates to only trigger effects once.\n\n**Module:** `@bquery/bquery/reactive`",
     insertText: ['batch(() => {', '  ${1:}', '});'].join('\n'),
     kind: vscode.CompletionItemKind.Function,
-    module: '@bquery/bquery/reactive',
   },
   // Store
   {
@@ -172,7 +158,6 @@ const BQ_API_COMPLETIONS: ApiCompletion[] = [
       '});',
     ].join('\n'),
     kind: vscode.CompletionItemKind.Function,
-    module: '@bquery/bquery/store',
   },
   {
     label: 'defineStore',
@@ -188,7 +173,6 @@ const BQ_API_COMPLETIONS: ApiCompletion[] = [
       '});',
     ].join('\n'),
     kind: vscode.CompletionItemKind.Function,
-    module: '@bquery/bquery/store',
   },
 ];
 
@@ -211,12 +195,21 @@ export function registerTsCompletionProvider(context: vscode.ExtensionContext): 
           return [];
         }
 
+        // Only provide completions when the user has typed a "bq" prefix
+        const prefixMatch = textBeforeCursor.match(/\bbq\w*$/i);
+        if (!prefixMatch) {
+          return [];
+        }
+
         return BQ_API_COMPLETIONS.map((api) => {
           const item = new vscode.CompletionItem(api.label, api.kind);
           item.detail = api.detail;
           item.documentation = new vscode.MarkdownString(api.documentation);
           item.insertText = new vscode.SnippetString(api.insertText);
           item.sortText = `0_bq_${api.label}`;
+          // Replace the typed prefix with the completion
+          const startPos = position.translate(0, -prefixMatch[0].length);
+          item.range = new vscode.Range(startPos, position);
           return item;
         });
       },

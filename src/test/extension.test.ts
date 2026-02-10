@@ -41,7 +41,7 @@ suite('bQuery Extension Test Suite', () => {
       language: 'html',
       content: '<div b',
     });
-    const editor = await vscode.window.showTextDocument(doc);
+    await vscode.window.showTextDocument(doc);
     const position = new vscode.Position(0, 6);
 
     const completions = await vscode.commands.executeCommand<vscode.CompletionList>(
@@ -58,6 +58,56 @@ suite('bQuery Extension Test Suite', () => {
         : item.label.label.startsWith('bq-')
     );
     assert.ok(bqItems.length > 0, 'Should include bq-* directive completions');
+
+    await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
+  });
+
+  test('TS completion provider should provide bQuery API completions when bq prefix is typed', async () => {
+    const doc = await vscode.workspace.openTextDocument({
+      language: 'typescript',
+      content: 'bq',
+    });
+    await vscode.window.showTextDocument(doc);
+    const position = new vscode.Position(0, 2);
+
+    const completions = await vscode.commands.executeCommand<vscode.CompletionList>(
+      'vscode.executeCompletionItemProvider',
+      doc.uri,
+      position
+    );
+
+    assert.ok(completions, 'Should return completions');
+    const bqItems = completions.items.filter((item) =>
+      typeof item.label === 'string'
+        ? item.detail?.startsWith('bQuery:')
+        : false
+    );
+    assert.ok(bqItems.length > 0, 'Should include bQuery API completions');
+
+    await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
+  });
+
+  test('TS completion provider should not provide completions inside strings', async () => {
+    const doc = await vscode.workspace.openTextDocument({
+      language: 'typescript',
+      content: "const x = 'bq",
+    });
+    await vscode.window.showTextDocument(doc);
+    const position = new vscode.Position(0, 14);
+
+    const completions = await vscode.commands.executeCommand<vscode.CompletionList>(
+      'vscode.executeCompletionItemProvider',
+      doc.uri,
+      position
+    );
+
+    assert.ok(completions, 'Should return completions');
+    const bqItems = completions.items.filter((item) =>
+      typeof item.label === 'string'
+        ? item.detail?.startsWith('bQuery:')
+        : false
+    );
+    assert.strictEqual(bqItems.length, 0, 'Should not include bQuery completions inside strings');
 
     await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
   });

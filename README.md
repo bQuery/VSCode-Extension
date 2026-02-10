@@ -1,6 +1,6 @@
 # bQuery for VSCode
 
-A VSCode Extension to improve the developer experience when working with [@bQuery/bQuery](https://github.com/bQuery/bQuery), especially the component, router and view system.
+A VSCode Extension to improve the developer experience when working with [@bquery/bquery](https://github.com/bQuery/bQuery), especially the component, router and view system.
 
 ## Features
 
