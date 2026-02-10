@@ -146,6 +146,13 @@ export function registerHtmlCompletionProvider(context: vscode.ExtensionContext)
  * Checks if the cursor position is inside an HTML opening tag.
  */
 function isInsideHtmlTag(textBeforeCursor: string): boolean {
+  // Check if we're inside an HTML comment (<!-- ... -->)
+  const lastCommentOpen = textBeforeCursor.lastIndexOf('<!--');
+  const lastCommentClose = textBeforeCursor.lastIndexOf('-->');
+  if (lastCommentOpen !== -1 && lastCommentOpen > lastCommentClose) {
+    return false;
+  }
+
   const lastOpenAngle = textBeforeCursor.lastIndexOf('<');
   const lastCloseAngle = textBeforeCursor.lastIndexOf('>');
 
@@ -155,8 +162,8 @@ function isInsideHtmlTag(textBeforeCursor: string): boolean {
 
   const afterLastOpen = textBeforeCursor.slice(lastOpenAngle);
 
-  // Exclude closing tags (e.g. </div) and HTML comments (e.g. <!-- comment)
-  if (afterLastOpen.startsWith('</') || afterLastOpen.startsWith('<!--')) {
+  // Exclude closing tags (e.g. </div)
+  if (afterLastOpen.startsWith('</')) {
     return false;
   }
 
