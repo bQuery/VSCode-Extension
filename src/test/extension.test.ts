@@ -162,6 +162,31 @@ suite('bQuery Extension Test Suite', () => {
     await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
   });
 
+  test('TS completion provider should provide completions after a line comment on a previous line', async () => {
+    const doc = await vscode.workspace.openTextDocument({
+      language: 'typescript',
+      content: '// comment\nconst x = 1;\nbq',
+    });
+    await vscode.window.showTextDocument(doc);
+    const position = new vscode.Position(2, doc.lineAt(2).text.length);
+
+    const completions = await vscode.commands.executeCommand<vscode.CompletionList>(
+      'vscode.executeCompletionItemProvider',
+      doc.uri,
+      position
+    );
+
+    assert.ok(completions, 'Should return completions');
+    const bqItems = completions.items.filter((item) =>
+      typeof item.label === 'string'
+        ? item.detail?.startsWith('bQuery:')
+        : false
+    );
+    assert.ok(bqItems.length > 0, 'Should include bQuery completions after a line comment on a previous line');
+
+    await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
+  });
+
   test('TS completion provider should suppress completions inside template literal text', async () => {
     const doc = await vscode.workspace.openTextDocument({
       language: 'typescript',

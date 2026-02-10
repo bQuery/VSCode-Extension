@@ -282,9 +282,16 @@ function isInsideStringOrComment(text: string): boolean {
       }
     }
 
-    // Line comment (not inside a string)
+    // Line comment — only active until end of the current line
     if (ch === '/' && next === '/') {
-      return true;
+      const nextNewlineIndex = text.indexOf('\n', i);
+      if (nextNewlineIndex === -1) {
+        // No newline after: this '//' is on the last line, so the cursor is in a comment.
+        return true;
+      }
+      // Skip ahead to just past the newline and continue scanning.
+      i = nextNewlineIndex;
+      continue;
     }
 
     // Block comment start
