@@ -220,11 +220,14 @@ export function registerTsCompletionProvider(context: vscode.ExtensionContext): 
 }
 
 /**
- * Basic heuristic to detect if cursor is inside a string literal, line comment, or block comment.
+ * Basic heuristic to detect if cursor is inside a string literal, line comment,
+ * block comment, or template literal text (but not inside `${...}` expressions).
  */
 function isInsideStringOrComment(text: string): boolean {
   let inString: string | null = null;
   let inBlockComment = false;
+  let inTemplateLiteral = false;
+  let templateDepth = 0;
 
   for (let i = 0; i < text.length; i++) {
     const ch = text[i];
@@ -245,6 +248,35 @@ function isInsideStringOrComment(text: string): boolean {
       continue;
     }
 
+    if (inTemplateLiteral) {
+      if (ch === '\\') {
+        i++; // skip escaped character
+        continue;
+      }
+      if (ch === '$' && next === '{') {
+        templateDepth++;
+        i++; // skip '{'
+        continue;
+      }
+      if (ch === '`') {
+        inTemplateLiteral = false;
+        continue;
+      }
+      if (templateDepth === 0) {
+        // Inside template text (not in ${...}), skip
+        continue;
+      }
+      // Inside ${...} expression — process normally
+      if (ch === '{') {
+        templateDepth++;
+        continue;
+      }
+      if (ch === '}') {
+        templateDepth--;
+        continue;
+      }
+    }
+
     // Line comment (not inside a string)
     if (ch === '/' && next === '/') {
       return true;
@@ -257,12 +289,19 @@ function isInsideStringOrComment(text: string): boolean {
       continue;
     }
 
-    // String start (single and double quotes only; template literals are excluded
-    // because completions inside template expression sections like `${bq}` are valid)
+    // String start (single and double quotes)
     if (ch === "'" || ch === '"') {
       inString = ch;
+      continue;
+    }
+
+    // Template literal start
+    if (ch === '`') {
+      inTemplateLiteral = true;
+      templateDepth = 0;
+      continue;
     }
   }
 
-  return inString !== null || inBlockComment;
+  return inString !== null || inBlockComment || (inTemplateLiteral && templateDepth === 0);
 }

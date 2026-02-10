@@ -145,5 +145,17 @@ export function registerHtmlCompletionProvider(context: vscode.ExtensionContext)
 function isInsideHtmlTag(textBeforeCursor: string): boolean {
   const lastOpenAngle = textBeforeCursor.lastIndexOf('<');
   const lastCloseAngle = textBeforeCursor.lastIndexOf('>');
-  return lastOpenAngle > lastCloseAngle && lastOpenAngle !== -1;
+
+  if (lastOpenAngle === -1 || lastOpenAngle <= lastCloseAngle) {
+    return false;
+  }
+
+  const afterLastOpen = textBeforeCursor.slice(lastOpenAngle);
+
+  // Exclude closing tags (e.g. </div) and HTML comments (e.g. <!-- comment)
+  if (afterLastOpen.startsWith('</') || afterLastOpen.startsWith('<!--')) {
+    return false;
+  }
+
+  return true;
 }
