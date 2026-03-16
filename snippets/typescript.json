@@ -71,9 +71,9 @@
       "",
       "const router = createRouter({",
       "  routes: [",
-      "    { path: '/', name: '${1:home}', component: ${2:HomePage} },",
-      "    { path: '${3:/about}', name: '${4:about}', component: ${5:AboutPage} },",
-      "    { path: '*', component: ${6:NotFound} }",
+      "    { path: '/', name: '${1:home}', component: () => import('${2:./pages/HomePage}') },",
+      "    { path: '${3:/about}', name: '${4:about}', component: () => import('${5:./pages/AboutPage}') },",
+      "    { path: '*', component: () => import('${6:./pages/NotFoundPage}') }",
       "  ],",
       "});"
     ],
@@ -82,14 +82,14 @@
   "bQuery Route Definition": {
     "prefix": "bq-route",
     "body": [
-      "{ path: '${1:/path}', name: '${2:name}', component: ${3:Component} }"
+      "{ path: '${1:/path}', name: '${2:name}', component: () => import('${3:./pages/Page}') }"
     ],
     "description": "Add a bQuery route definition"
   },
   "bQuery Route with Params": {
     "prefix": "bq-route-params",
     "body": [
-      "{ path: '${1:/user/:id}', name: '${2:user}', component: ${3:UserPage} }"
+      "{ path: '${1:/user/:id}', name: '${2:user}', component: () => import('${3:./pages/UserPage}') }"
     ],
     "description": "Add a bQuery route definition with params"
   },
@@ -205,7 +205,7 @@
   "bQuery Import Component": {
     "prefix": "bq-import-component",
     "body": [
-      "import { component, defineComponent, html } from '@bquery/bquery/component';"
+      "import { component, defineComponent, html, bool } from '@bquery/bquery/component';"
     ],
     "description": "Import bQuery component module"
   },
@@ -226,9 +226,16 @@
   "bQuery Import Reactive": {
     "prefix": "bq-import-reactive",
     "body": [
-      "import { signal, computed, effect, batch, watch, readonly } from '@bquery/bquery/reactive';"
+      "import { signal, computed, effect, batch, watch, readonly, linkedSignal } from '@bquery/bquery/reactive';"
     ],
     "description": "Import bQuery reactive module"
+  },
+  "bQuery Bool": {
+    "prefix": "bq-bool",
+    "body": [
+      "bool('${1:disabled}', ${2:condition})"
+    ],
+    "description": "Create a bQuery boolean HTML attribute helper"
   },
   "bQuery Import Store": {
     "prefix": "bq-import-store",

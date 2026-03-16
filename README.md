@@ -25,11 +25,12 @@ Type `bq-` to see all available snippets.
 | `bq-computed` | Create a computed signal |
 | `bq-effect` | Create a reactive effect |
 | `bq-watch` | Watch a signal for changes |
+| `bq-bool` | Create a boolean HTML attribute helper |
 | `bq-store` | Create a state store |
 | `bq-define-store` | Create a factory-style store (Pinia-style) |
 | `bq-persisted-store` | Create a persisted store (localStorage) |
 | `bq-linked-signal` | Create a writable computed (linked signal) |
-| `bq-import-component` | Import component module |
+| `bq-import-component` | Import component module helpers (`component`, `defineComponent`, `html`, `bool`) |
 | `bq-import-router` | Import router module |
 | `bq-import-view` | Import view module |
 | `bq-import-reactive` | Import reactive module |
@@ -59,7 +60,7 @@ Type `bq-` to see all available snippets.
 ### IntelliSense Completions
 
 - **HTML**: Auto-complete bQuery view directives (`bq-text`, `bq-if`, `bq-for`, `bq-on:event`, `bq-model`, `bq-class`, `bq-style`, `bq-show`, `bq-html`, `bq-bind:attr`, `bq-ref`) when typing inside HTML tags.
-- **TypeScript/JavaScript**: Auto-complete bQuery API functions (`component`, `createRouter`, `mount`, `signal`, `computed`, `effect`, `createStore`, and more) with documentation and snippet insertion.
+- **TypeScript/JavaScript**: Auto-complete bQuery API functions (`component`, `bool`, `createRouter`, `mount`, `signal`, `computed`, `watch`, `linkedSignal`, `createStore`, and more) with documentation and snippet insertion.
 
 ## Requirements
 

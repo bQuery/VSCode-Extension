@@ -167,6 +167,29 @@ suite('bQuery Extension Test Suite', () => {
     await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
   });
 
+  test('TS completion provider should include the bool helper for component templates', async () => {
+    const doc = await vscode.workspace.openTextDocument({
+      language: 'typescript',
+      content: 'bq',
+    });
+    await vscode.window.showTextDocument(doc);
+    const position = new vscode.Position(0, 2);
+
+    const completions = await vscode.commands.executeCommand<vscode.CompletionList>(
+      'vscode.executeCompletionItemProvider',
+      doc.uri,
+      position
+    );
+
+    assert.ok(completions, 'Should return completions');
+    const boolItem = completions.items.find((item) =>
+      typeof item.label === 'string' ? item.label === 'bool' : item.label.label === 'bool'
+    );
+    assert.ok(boolItem, 'Should include the bool helper completion');
+
+    await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
+  });
+
   test('TS completion provider should not provide completions inside strings', async () => {
     const doc = await vscode.workspace.openTextDocument({
       language: 'typescript',
