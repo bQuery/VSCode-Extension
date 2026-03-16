@@ -30,6 +30,7 @@ suite('bQuery Extension Test Suite', () => {
     const extension = vscode.extensions.getExtension('bquery.bquery');
     assert.ok(extension);
     const snippets = extension.packageJSON.contributes?.snippets;
+    assert.ok(Array.isArray(snippets), 'Snippets should be an array');
     const htmlSnippet = snippets.find(
       (s: { language: string }) => s.language === 'html'
     );
@@ -308,6 +309,35 @@ suite('bQuery Extension Test Suite', () => {
         : false
     );
     assert.ok(bqItems.length > 0, 'Should include bQuery completions inside template expressions');
+
+    await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
+  });
+
+  test('TS completion provider should suppress completions inside nested template literal text', async () => {
+    const doc = await vscode.workspace.openTextDocument({
+      language: 'typescript',
+      content: 'const s = `value: ${`bq',
+    });
+    await vscode.window.showTextDocument(doc);
+    const position = new vscode.Position(0, doc.lineAt(0).text.length);
+
+    const completions = await vscode.commands.executeCommand<vscode.CompletionList>(
+      'vscode.executeCompletionItemProvider',
+      doc.uri,
+      position
+    );
+
+    assert.ok(completions, 'Should return completions');
+    const bqItems = completions.items.filter((item) =>
+      typeof item.label === 'string'
+        ? item.detail?.startsWith('bQuery:')
+        : false
+    );
+    assert.strictEqual(
+      bqItems.length,
+      0,
+      'Should not include bQuery completions inside nested template literal text'
+    );
 
     await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
   });

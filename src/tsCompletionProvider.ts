@@ -231,8 +231,7 @@ export function registerTsCompletionProvider(context: vscode.ExtensionContext): 
 function isInsideStringOrComment(text: string): boolean {
   let inString: string | null = null;
   let inBlockComment = false;
-  let inTemplateLiteral = false;
-  let templateDepth = 0;
+  const templateStack: number[] = [];
 
   for (let i = 0; i < text.length; i++) {
     const ch = text[i];
@@ -253,31 +252,37 @@ function isInsideStringOrComment(text: string): boolean {
       continue;
     }
 
-    if (inTemplateLiteral) {
-      if (ch === '\\') {
-        i++; // skip escaped character
-        continue;
-      }
-      if (ch === '$' && next === '{') {
-        templateDepth++;
-        i++; // skip '{'
-        continue;
-      }
-      if (ch === '`') {
-        inTemplateLiteral = false;
-        continue;
-      }
-      if (templateDepth === 0) {
+    const currentTemplateDepth = templateStack[templateStack.length - 1];
+    if (currentTemplateDepth !== undefined) {
+      if (currentTemplateDepth === 0) {
+        if (ch === '\\') {
+          i++; // skip escaped character in template text
+          continue;
+        }
+        if (ch === '$' && next === '{') {
+          templateStack[templateStack.length - 1] = 1;
+          i++; // skip '{'
+          continue;
+        }
+        if (ch === '`') {
+          templateStack.pop();
+          continue;
+        }
         // Inside template text (not in ${...}), skip
         continue;
       }
-      // Inside ${...} expression — process normally
+
+      // Inside ${...} expression of the current template literal.
+      if (ch === '`') {
+        templateStack.push(0);
+        continue;
+      }
       if (ch === '{') {
-        templateDepth++;
+        templateStack[templateStack.length - 1] = currentTemplateDepth + 1;
         continue;
       }
       if (ch === '}') {
-        templateDepth = Math.max(0, templateDepth - 1);
+        templateStack[templateStack.length - 1] = Math.max(0, currentTemplateDepth - 1);
         continue;
       }
     }
@@ -309,11 +314,14 @@ function isInsideStringOrComment(text: string): boolean {
 
     // Template literal start
     if (ch === '`') {
-      inTemplateLiteral = true;
-      templateDepth = 0;
+      templateStack.push(0);
       continue;
     }
   }
 
-  return inString !== null || inBlockComment || (inTemplateLiteral && templateDepth === 0);
+  return (
+    inString !== null ||
+    inBlockComment ||
+    (templateStack.length > 0 && templateStack[templateStack.length - 1] === 0)
+  );
 }

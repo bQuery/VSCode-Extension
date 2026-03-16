@@ -52,7 +52,7 @@
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
+    "watch": "tsc --watch -p ./",
     "lint": "eslint src",
     "test": "node ./dist/test/runTest.js"
   },
