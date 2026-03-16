@@ -1,0 +1,102 @@
+{
+  "bQuery Text Directive": {
+    "prefix": "bq-text",
+    "body": ["bq-text=\"${1:expression}\""],
+    "description": "bQuery text binding directive - sets element text content"
+  },
+  "bQuery HTML Directive": {
+    "prefix": "bq-html",
+    "body": ["bq-html=\"${1:expression}\""],
+    "description": "bQuery HTML binding directive - sets element innerHTML (sanitized)"
+  },
+  "bQuery If Directive": {
+    "prefix": "bq-if",
+    "body": ["bq-if=\"${1:condition}\""],
+    "description": "bQuery conditional rendering directive"
+  },
+  "bQuery Show Directive": {
+    "prefix": "bq-show",
+    "body": ["bq-show=\"${1:condition}\""],
+    "description": "bQuery show/hide directive (toggles display)"
+  },
+  "bQuery For Directive": {
+    "prefix": "bq-for",
+    "body": ["bq-for=\"${1:item} in ${2:items}\""],
+    "description": "bQuery list rendering directive"
+  },
+  "bQuery Model Directive": {
+    "prefix": "bq-model",
+    "body": ["bq-model=\"${1:signalName}\""],
+    "description": "bQuery two-way data binding directive"
+  },
+  "bQuery On Directive": {
+    "prefix": "bq-on",
+    "body": ["bq-on:${1:click}=\"${2:handler}\""],
+    "description": "bQuery event handler directive"
+  },
+  "bQuery Class Directive": {
+    "prefix": "bq-class",
+    "body": ["bq-class=\"{ ${1:active}: ${2:condition} }\""],
+    "description": "bQuery conditional class binding directive"
+  },
+  "bQuery Style Directive": {
+    "prefix": "bq-style",
+    "body": ["bq-style=\"{ ${1:color}: ${2:expression} }\""],
+    "description": "bQuery dynamic style binding directive"
+  },
+  "bQuery Bind Directive": {
+    "prefix": "bq-bind",
+    "body": ["bq-bind:${1:attr}=\"${2:expression}\""],
+    "description": "bQuery attribute binding directive"
+  },
+  "bQuery Ref Directive": {
+    "prefix": "bq-ref",
+    "body": ["bq-ref=\"${1:refName}\""],
+    "description": "bQuery element reference directive"
+  },
+  "bQuery App Template": {
+    "prefix": "bq-app",
+    "body": [
+      "<div id=\"app\">",
+      "  <h1 bq-text=\"${1:title}\"></h1>",
+      "  <p bq-text=\"${2:message}\"></p>",
+      "  <button bq-on:click=\"${3:handler}\">${4:Click me}</button>",
+      "</div>",
+      "",
+      "<script type=\"module\">",
+      "  import { mount } from '@bquery/bquery/view';",
+      "  import { signal } from '@bquery/bquery/reactive';",
+      "",
+      "  const ${1:title} = signal('${5:Hello}');",
+      "  const ${2:message} = signal('${6:Welcome to bQuery}');",
+      "",
+      "  mount('#app', {",
+      "    ${1:title},",
+      "    ${2:message},",
+      "    ${3:handler}: () => { ${7:// handle click} },",
+      "  });",
+      "</script>"
+    ],
+    "description": "Create a full bQuery app template with view bindings"
+  },
+  "bQuery For Loop Template": {
+    "prefix": "bq-for-template",
+    "body": [
+      "<ul>",
+      "  <li bq-for=\"${1:item} in ${2:items}\" bq-text=\"${1:item}\"></li>",
+      "</ul>"
+    ],
+    "description": "Create a bQuery list rendering template"
+  },
+  "bQuery Counter Template": {
+    "prefix": "bq-counter",
+    "body": [
+      "<div>",
+      "  <p bq-text=\"${1:count}\"></p>",
+      "  <button bq-on:click=\"${2:increment}\">+</button>",
+      "  <button bq-on:click=\"${3:decrement}\">-</button>",
+      "</div>"
+    ],
+    "description": "Create a bQuery counter template with reactive bindings"
+  }
+}
