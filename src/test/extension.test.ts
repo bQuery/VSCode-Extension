@@ -159,6 +159,10 @@ suite('bQuery Extension Test Suite', () => {
         : false
     );
     assert.ok(bqItems.length > 0, 'Should include bQuery API completions');
+    assert.ok(
+      bqItems.some((item) => item.filterText?.startsWith('bq')),
+      'Should set filterText so bq-prefixed suggestions remain visible'
+    );
 
     await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
   });
@@ -184,6 +188,35 @@ suite('bQuery Extension Test Suite', () => {
         : false
     );
     assert.strictEqual(bqItems.length, 0, 'Should not include bQuery completions inside strings');
+
+    await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
+  });
+
+  test('TS completion provider should not treat quotes after even backslashes as escaped', async () => {
+    const doc = await vscode.workspace.openTextDocument({
+      language: 'typescript',
+      content: String.raw`const value = "a\\"
+bq`,
+    });
+    await vscode.window.showTextDocument(doc);
+    const position = new vscode.Position(1, doc.lineAt(1).text.length);
+
+    const completions = await vscode.commands.executeCommand<vscode.CompletionList>(
+      'vscode.executeCompletionItemProvider',
+      doc.uri,
+      position
+    );
+
+    assert.ok(completions, 'Should return completions');
+    const bqItems = completions.items.filter((item) =>
+      typeof item.label === 'string'
+        ? item.detail?.startsWith('bQuery:')
+        : false
+    );
+    assert.ok(
+      bqItems.length > 0,
+      'Should include bQuery completions after a string closed by an even number of backslashes'
+    );
 
     await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
   });

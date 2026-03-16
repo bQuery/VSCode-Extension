@@ -211,6 +211,7 @@ export function registerTsCompletionProvider(context: vscode.ExtensionContext): 
           item.detail = api.detail;
           item.documentation = new vscode.MarkdownString(api.documentation);
           item.insertText = new vscode.SnippetString(api.insertText);
+          item.filterText = `bq${api.label}`;
           item.sortText = `0_bq_${api.label}`;
           // Replace the typed prefix with the completion
           const startPos = position.translate(0, -prefixMatch[0].length);
@@ -246,7 +247,7 @@ function isInsideStringOrComment(text: string): boolean {
     }
 
     if (inString) {
-      if (ch === inString && text[i - 1] !== '\\') {
+      if (ch === inString && !isEscaped(text, i)) {
         inString = null;
       }
       continue;
@@ -324,4 +325,14 @@ function isInsideStringOrComment(text: string): boolean {
     inBlockComment ||
     (templateStack.length > 0 && templateStack[templateStack.length - 1] === 0)
   );
+}
+
+function isEscaped(text: string, index: number): boolean {
+  let backslashCount = 0;
+
+  for (let i = index - 1; i >= 0 && text[i] === '\\'; i--) {
+    backslashCount++;
+  }
+
+  return backslashCount % 2 === 1;
 }
