@@ -17,7 +17,7 @@ const BQ_API_COMPLETIONS: ApiCompletion[] = [
     label: 'component',
     detail: 'bQuery: Register a web component',
     documentation:
-      "Creates and registers a custom element with props, lifecycle hooks, and a render function.\n\n**Module:** `@bquery/bquery/component`",
+      "Creates and registers a custom element with props, optional typed state/signals, lifecycle hooks, and a render function.\n\n**Module:** `@bquery/bquery/component`",
     insertText: [
       "component('${1:my-component}', {",
       '  props: {',
@@ -47,8 +47,16 @@ const BQ_API_COMPLETIONS: ApiCompletion[] = [
     label: 'html',
     detail: 'bQuery: HTML template tag',
     documentation:
-      "Tagged template literal for component rendering. Sanitizes interpolated values.\n\n**Module:** `@bquery/bquery/component`",
+      "Tagged template literal for component rendering. Combine with `bool()` for ergonomic boolean attributes.\n\n**Module:** `@bquery/bquery/component`",
     insertText: 'html`${1:template}`',
+    kind: vscode.CompletionItemKind.Function,
+  },
+  {
+    label: 'bool',
+    detail: 'bQuery: Boolean HTML attribute helper',
+    documentation:
+      "Creates a boolean-attribute marker for `html` / `safeHtml` templates so attributes like `disabled` are only rendered when enabled.\n\n**Module:** `@bquery/bquery/component`",
+    insertText: "bool('${1:disabled}', ${2:condition})",
     kind: vscode.CompletionItemKind.Function,
   },
   // Router
@@ -56,13 +64,13 @@ const BQ_API_COMPLETIONS: ApiCompletion[] = [
     label: 'createRouter',
     detail: 'bQuery: Create a SPA router',
     documentation:
-      "Creates a router instance with route definitions, navigation guards, and history API integration.\n\n**Module:** `@bquery/bquery/router`",
+      "Creates a router instance with route definitions, lazy component loaders, navigation guards, and history API integration.\n\n**Module:** `@bquery/bquery/router`",
     insertText: [
       'const router = createRouter({',
       '  routes: [',
-      "    { path: '/', name: '${1:home}', component: ${2:HomePage} },",
-      "    { path: '${3:/about}', name: '${4:about}', component: ${5:AboutPage} },",
-      '    { path: \'*\', component: ${6:NotFound} }',
+      "    { path: '/', name: '${1:home}', component: () => import('${2:./pages/HomePage}') },",
+      "    { path: '${3:/about}', name: '${4:about}', component: () => import('${5:./pages/AboutPage}') },",
+      "    { path: '*', component: () => import('${6:./pages/NotFoundPage}') }",
       '  ],',
       '});',
     ].join('\n'),
@@ -102,8 +110,8 @@ const BQ_API_COMPLETIONS: ApiCompletion[] = [
     label: 'createTemplate',
     detail: 'bQuery: Create a reusable template',
     documentation:
-      "Creates a reusable template that can be mounted multiple times.\n\n**Module:** `@bquery/bquery/view`",
-    insertText: "const template = createTemplate('${1:template-id}');",
+      "Creates a reusable view factory from an HTML template string.\n\n**Module:** `@bquery/bquery/view`",
+    insertText: ['const template = createTemplate(`', '  ${1:<div bq-text="message"></div>}', '`);'].join('\n'),
     kind: vscode.CompletionItemKind.Function,
   },
   // Reactive
@@ -139,6 +147,37 @@ const BQ_API_COMPLETIONS: ApiCompletion[] = [
     insertText: ['batch(() => {', '  ${1:}', '});'].join('\n'),
     kind: vscode.CompletionItemKind.Function,
   },
+  {
+    label: 'watch',
+    detail: 'bQuery: Watch a reactive source',
+    documentation:
+      "Watches a signal or computed value and runs a callback with the new and previous values whenever it changes.\n\n**Module:** `@bquery/bquery/reactive`",
+    insertText: ['const stop = watch(${1:source}, (${2:newValue}, ${3:oldValue}) => {', '  ${4:}', '});'].join('\n'),
+    kind: vscode.CompletionItemKind.Function,
+  },
+  {
+    label: 'readonly',
+    detail: 'bQuery: Create a read-only signal view',
+    documentation:
+      "Wraps a signal in a read-only interface so consumers can observe it without mutating `.value`.\n\n**Module:** `@bquery/bquery/reactive`",
+    insertText: 'const ${1:publicSignal} = readonly(${2:sourceSignal});',
+    kind: vscode.CompletionItemKind.Function,
+  },
+  {
+    label: 'linkedSignal',
+    detail: 'bQuery: Create a writable computed signal',
+    documentation:
+      "Creates a writable computed-like signal by linking a getter and setter.\n\n**Module:** `@bquery/bquery/reactive`",
+    insertText: [
+      'const ${1:name} = linkedSignal(',
+      '  () => ${2:derivedValue},',
+      '  (${3:next}) => {',
+      '    ${4:}',
+      '  }',
+      ');',
+    ].join('\n'),
+    kind: vscode.CompletionItemKind.Function,
+  },
   // Store
   {
     label: 'createStore',
@@ -170,6 +209,19 @@ const BQ_API_COMPLETIONS: ApiCompletion[] = [
       '  actions: {',
       '    ${5:increment}() { this.${3:count}++; }',
       '  },',
+      '});',
+    ].join('\n'),
+    kind: vscode.CompletionItemKind.Function,
+  },
+  {
+    label: 'createPersistedStore',
+    detail: 'bQuery: Create a persisted state store',
+    documentation:
+      "Creates a store that persists its state to localStorage, with an optional custom storage key.\n\n**Module:** `@bquery/bquery/store`",
+    insertText: [
+      "const ${1:store} = createPersistedStore({",
+      "  id: '${2:settings}',",
+      "  state: () => ({ ${3:theme}: '${4:dark}' }),",
       '});',
     ].join('\n'),
     kind: vscode.CompletionItemKind.Function,
