@@ -17,7 +17,7 @@ const BQ_API_COMPLETIONS: ApiCompletion[] = [
     label: 'component',
     detail: 'bQuery: Register a web component',
     documentation:
-      "Creates and registers a custom element with props, optional typed state/signals, lifecycle hooks, and a render function.\n\n**Module:** `@bquery/bquery/component`",
+      "Creates and registers a custom element with props, optional typed state/signals, shadow mode control, attribute observation, lifecycle hooks, and a render function.\n\n**Module:** `@bquery/bquery/component`",
     insertText: [
       "component('${1:my-component}', {",
       '  props: {',
@@ -59,12 +59,36 @@ const BQ_API_COMPLETIONS: ApiCompletion[] = [
     insertText: "bool('${1:disabled}', ${2:condition})",
     kind: vscode.CompletionItemKind.Function,
   },
+  {
+    label: 'useSignal',
+    detail: 'bQuery: Create a component-scoped signal',
+    documentation:
+      "Creates a component-scoped writable signal that is cleaned up automatically when the element disconnects. Call it from component lifecycle hooks rather than `render()`.\n\n**Module:** `@bquery/bquery/component`",
+    insertText: 'const ${1:name} = useSignal(${2:initialValue});',
+    kind: vscode.CompletionItemKind.Function,
+  },
+  {
+    label: 'useComputed',
+    detail: 'bQuery: Create a component-scoped computed signal',
+    documentation:
+      "Creates a component-scoped computed signal that automatically cleans up with the element lifecycle. Call it from component lifecycle hooks rather than `render()`.\n\n**Module:** `@bquery/bquery/component`",
+    insertText: 'const ${1:name} = useComputed(() => ${2:expression});',
+    kind: vscode.CompletionItemKind.Function,
+  },
+  {
+    label: 'useEffect',
+    detail: 'bQuery: Create a component-scoped effect',
+    documentation:
+      "Runs a component-scoped reactive effect that automatically cleans up when the element disconnects. Call it from component lifecycle hooks rather than `render()`.\n\n**Module:** `@bquery/bquery/component`",
+    insertText: ['useEffect(() => {', '  ${1:}', '});'].join('\n'),
+    kind: vscode.CompletionItemKind.Function,
+  },
   // Router
   {
     label: 'createRouter',
     detail: 'bQuery: Create a SPA router',
     documentation:
-      "Creates a router instance with route definitions, lazy component loaders, navigation guards, and history API integration.\n\n**Module:** `@bquery/bquery/router`",
+      "Creates a router instance with route definitions, lazy component loaders, global and per-route guards, redirects, optional scroll restoration, and history API integration.\n\n**Module:** `@bquery/bquery/router`",
     insertText: [
       'const router = createRouter({',
       '  routes: [',
@@ -91,6 +115,22 @@ const BQ_API_COMPLETIONS: ApiCompletion[] = [
       "A reactive signal containing the current route information (path, params, query, hash).\n\n**Module:** `@bquery/bquery/router`",
     insertText: 'currentRoute.value',
     kind: vscode.CompletionItemKind.Variable,
+  },
+  {
+    label: 'useRoute',
+    detail: 'bQuery: Focused route signals',
+    documentation:
+      "Returns focused readonly signals for the current route, path, params, query, hash, and matched definition.\n\n**Module:** `@bquery/bquery/router`",
+    insertText: 'const { path, params, query, hash, matched } = useRoute();',
+    kind: vscode.CompletionItemKind.Function,
+  },
+  {
+    label: 'registerBqLink',
+    detail: 'bQuery: Register the <bq-link> element',
+    documentation:
+      "Registers the declarative `<bq-link>` custom element for router-aware navigation links.\n\n**Module:** `@bquery/bquery/router`",
+    insertText: 'registerBqLink();',
+    kind: vscode.CompletionItemKind.Function,
   },
   // View
   {
@@ -217,7 +257,7 @@ const BQ_API_COMPLETIONS: ApiCompletion[] = [
     label: 'createPersistedStore',
     detail: 'bQuery: Create a persisted state store',
     documentation:
-      "Creates a store that persists its state to localStorage, with an optional custom storage key.\n\n**Module:** `@bquery/bquery/store`",
+      "Creates a store that persists its state with optional custom key, storage backend, serializer, version, and migrate options.\n\n**Module:** `@bquery/bquery/store`",
     insertText: [
       "const ${1:store} = createPersistedStore({",
       "  id: '${2:settings}',",
