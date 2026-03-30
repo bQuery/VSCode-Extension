@@ -29,14 +29,26 @@ Type `bq-` to see all available snippets.
 | `bq-store` | Create a state store |
 | `bq-define-store` | Create a factory-style store (Pinia-style) |
 | `bq-persisted-store` | Create a persisted store (localStorage) |
+| `bq-scoped-reactivity` | Create a component with `useSignal`, `useComputed`, and `useEffect` |
+| `bq-use-route` | Access focused route signals with `useRoute` |
+| `bq-register-link` | Register the declarative `<bq-link>` router element |
 | `bq-linked-signal` | Create a writable computed (linked signal) |
-| `bq-import-component` | Import component module helpers (`component`, `defineComponent`, `html`, `bool`) |
+| `bq-import-component` | Import component module helpers (`component`, `defineComponent`, `html`, `bool`, `useSignal`, `useComputed`, `useEffect`) |
 | `bq-import-router` | Import router module |
 | `bq-import-view` | Import view module |
 | `bq-import-reactive` | Import reactive module |
 | `bq-import-store` | Import store module |
 | `bq-import-core` | Import core selectors |
 | `bq-import-motion` | Import motion module |
+| `bq-import-a11y` | Import the new `@bquery/bquery/a11y` entry point |
+| `bq-import-forms` | Import the new `@bquery/bquery/forms` entry point |
+| `bq-import-i18n` | Import the new `@bquery/bquery/i18n` entry point |
+| `bq-import-media` | Import the new `@bquery/bquery/media` entry point |
+| `bq-import-dnd` | Import the new `@bquery/bquery/dnd` entry point |
+| `bq-import-plugin` | Import the new `@bquery/bquery/plugin` entry point |
+| `bq-import-devtools` | Import the new `@bquery/bquery/devtools` entry point |
+| `bq-import-testing` | Import the new `@bquery/bquery/testing` entry point |
+| `bq-import-ssr` | Import the new `@bquery/bquery/ssr` entry point |
 
 #### HTML
 
@@ -60,7 +72,7 @@ Type `bq-` to see all available snippets.
 ### IntelliSense Completions
 
 - **HTML**: Auto-complete bQuery view directives (`bq-text`, `bq-if`, `bq-for`, `bq-on:event`, `bq-model`, `bq-class`, `bq-style`, `bq-show`, `bq-html`, `bq-bind:attr`, `bq-ref`) when typing inside HTML tags.
-- **TypeScript/JavaScript**: Auto-complete bQuery API functions (`component`, `bool`, `createRouter`, `mount`, `signal`, `computed`, `watch`, `linkedSignal`, `createStore`, and more) with documentation and snippet insertion.
+- **TypeScript/JavaScript**: Auto-complete bQuery API functions (`component`, `bool`, `useSignal`, `useComputed`, `useEffect`, `createRouter`, `useRoute`, `registerBqLink`, `mount`, `signal`, `computed`, `watch`, `linkedSignal`, `createStore`, and more) with documentation and snippet insertion.
 
 ## Requirements
 

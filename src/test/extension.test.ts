@@ -190,6 +190,43 @@ suite('bQuery Extension Test Suite', () => {
     await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
   });
 
+  test('TS completion provider should include key bQuery 1.7.0 API completions', async () => {
+    const doc = await vscode.workspace.openTextDocument({
+      language: 'typescript',
+      content: 'bq',
+    });
+    await vscode.window.showTextDocument(doc);
+    const position = new vscode.Position(0, 2);
+
+    const completions = await vscode.commands.executeCommand<vscode.CompletionList>(
+      'vscode.executeCompletionItemProvider',
+      doc.uri,
+      position
+    );
+
+    assert.ok(completions, 'Should return completions');
+
+    const bqItems = completions.items.filter((item) =>
+      typeof item.label === 'string'
+        ? item.detail?.startsWith('bQuery:')
+        : false
+    );
+
+    const labels = new Set(
+      bqItems.map((item) =>
+        typeof item.label === 'string' ? item.label : item.label.label
+      )
+    );
+
+    assert.ok(labels.has('useSignal'), 'Should include the useSignal completion');
+    assert.ok(labels.has('useComputed'), 'Should include the useComputed completion');
+    assert.ok(labels.has('useEffect'), 'Should include the useEffect completion');
+    assert.ok(labels.has('useRoute'), 'Should include the useRoute completion');
+    assert.ok(labels.has('registerBqLink'), 'Should include the registerBqLink completion');
+
+    await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
+  });
+
   test('TS completion provider should not provide completions inside strings', async () => {
     const doc = await vscode.workspace.openTextDocument({
       language: 'typescript',

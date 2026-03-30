@@ -205,14 +205,14 @@
   "bQuery Import Component": {
     "prefix": "bq-import-component",
     "body": [
-      "import { component, defineComponent, html, bool } from '@bquery/bquery/component';"
+      "import { component, defineComponent, html, bool, useSignal, useComputed, useEffect } from '@bquery/bquery/component';"
     ],
     "description": "Import bQuery component module"
   },
   "bQuery Import Router": {
     "prefix": "bq-import-router",
     "body": [
-      "import { createRouter, navigate, currentRoute } from '@bquery/bquery/router';"
+      "import { createRouter, navigate, currentRoute, useRoute, registerBqLink } from '@bquery/bquery/router';"
     ],
     "description": "Import bQuery router module"
   },
@@ -283,5 +283,109 @@
       "});"
     ],
     "description": "Create a bQuery persisted store (localStorage)"
+  },
+  "bQuery Scoped Reactivity": {
+    "prefix": "bq-scoped-reactivity",
+    "body": [
+      "import { component, html, useSignal, useComputed, useEffect } from '@bquery/bquery/component';",
+      "",
+      "component('${1:scoped-counter}', {",
+      "  connected() {",
+      "    const ${2:count} = useSignal(${3:0});",
+      "    const ${4:doubled} = useComputed(() => ${2:count}.value * 2);",
+      "",
+      "    useEffect(() => {",
+      "      this.setState('${2:count}', ${2:count}.value);",
+      "      this.setState('${4:doubled}', ${4:doubled}.value);",
+      "    });",
+      "  },",
+      "  state: { ${2:count}: ${3:0}, ${4:doubled}: ${5:0} },",
+      "  render({ state }) {",
+      "    return html`<p>\\${state.${2:count}} → \\${state.${4:doubled}}</p>`;",
+      "  },",
+      "});"
+    ],
+    "description": "Create a bQuery component with scoped useSignal/useComputed/useEffect helpers"
+  },
+  "bQuery Use Route": {
+    "prefix": "bq-use-route",
+    "body": [
+      "import { useRoute } from '@bquery/bquery/router';",
+      "",
+      "const { path, params, query, hash, matched } = useRoute();"
+    ],
+    "description": "Access focused reactive route signals with useRoute"
+  },
+  "bQuery Register Link": {
+    "prefix": "bq-register-link",
+    "body": [
+      "import { registerBqLink } from '@bquery/bquery/router';",
+      "",
+      "registerBqLink();"
+    ],
+    "description": "Register the declarative <bq-link> router element"
+  },
+  "bQuery Import A11y": {
+    "prefix": "bq-import-a11y",
+    "body": [
+      "import { ${1:helper} } from '@bquery/bquery/a11y';"
+    ],
+    "description": "Import bQuery accessibility helpers"
+  },
+  "bQuery Import Forms": {
+    "prefix": "bq-import-forms",
+    "body": [
+      "import { ${1:helper} } from '@bquery/bquery/forms';"
+    ],
+    "description": "Import bQuery forms module"
+  },
+  "bQuery Import I18n": {
+    "prefix": "bq-import-i18n",
+    "body": [
+      "import { ${1:helper} } from '@bquery/bquery/i18n';"
+    ],
+    "description": "Import bQuery i18n module"
+  },
+  "bQuery Import Media": {
+    "prefix": "bq-import-media",
+    "body": [
+      "import { ${1:helper} } from '@bquery/bquery/media';"
+    ],
+    "description": "Import bQuery media module"
+  },
+  "bQuery Import DnD": {
+    "prefix": "bq-import-dnd",
+    "body": [
+      "import { ${1:helper} } from '@bquery/bquery/dnd';"
+    ],
+    "description": "Import bQuery drag-and-drop module"
+  },
+  "bQuery Import Plugin": {
+    "prefix": "bq-import-plugin",
+    "body": [
+      "import { ${1:helper} } from '@bquery/bquery/plugin';"
+    ],
+    "description": "Import bQuery plugin module"
+  },
+  "bQuery Import Devtools": {
+    "prefix": "bq-import-devtools",
+    "body": [
+      "import { ${1:helper} } from '@bquery/bquery/devtools';"
+    ],
+    "description": "Import bQuery devtools module"
+  },
+  "bQuery Import Testing": {
+    "prefix": "bq-import-testing",
+    "body": [
+      "import { ${1:helper} } from '@bquery/bquery/testing';"
+    ],
+    "description": "Import bQuery testing helpers"
+  },
+  "bQuery Import SSR": {
+    "prefix": "bq-import-ssr",
+    "body": [
+      "import { ${1:helper} } from '@bquery/bquery/ssr';"
+    ],
+    "description": "Import bQuery SSR utilities"
   }
 }
