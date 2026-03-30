@@ -301,7 +301,7 @@
       "  },",
       "  state: { ${2:count}: ${3:0}, ${4:doubled}: ${5:0} },",
       "  render({ state }) {",
-      "    return html`<p>${6:\\${state.${2:count}}} → \\${state.${4:doubled}}</p>`;",
+      "    return html`<p>\\${state.${2:count}} → \\${state.${4:doubled}}</p>`;",
       "  },",
       "});"
     ],

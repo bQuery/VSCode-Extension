@@ -33,7 +33,7 @@ Type `bq-` to see all available snippets.
 | `bq-use-route` | Access focused route signals with `useRoute` |
 | `bq-register-link` | Register the declarative `<bq-link>` router element |
 | `bq-linked-signal` | Create a writable computed (linked signal) |
-| `bq-import-component` | Import component module helpers (`component`, `defineComponent`, `html`, `bool`) |
+| `bq-import-component` | Import component module helpers (`component`, `defineComponent`, `html`, `bool`, `useSignal`, `useComputed`, `useEffect`) |
 | `bq-import-router` | Import router module |
 | `bq-import-view` | Import view module |
 | `bq-import-reactive` | Import reactive module |

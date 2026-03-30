@@ -206,8 +206,14 @@ suite('bQuery Extension Test Suite', () => {
 
     assert.ok(completions, 'Should return completions');
 
+    const bqItems = completions.items.filter((item) =>
+      typeof item.label === 'string'
+        ? item.detail?.startsWith('bQuery:')
+        : false
+    );
+
     const labels = new Set(
-      completions.items.map((item) =>
+      bqItems.map((item) =>
         typeof item.label === 'string' ? item.label : item.label.label
       )
     );
