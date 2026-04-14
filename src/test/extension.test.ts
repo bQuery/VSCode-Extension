@@ -5,18 +5,31 @@ function getCompletionLabel(item: vscode.CompletionItem): string {
   return typeof item.label === 'string' ? item.label : item.label.label;
 }
 
+function hasSnippetValue(
+  value: unknown
+): value is {
+  value: string;
+} {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'value' in value &&
+    typeof value.value === 'string'
+  );
+}
+
 function getCompletionRange(item: vscode.CompletionItem): vscode.Range {
   if (item.range instanceof vscode.Range) {
     return item.range;
   }
 
   if (item.range && typeof item.range === 'object') {
-    const insertReplaceRange = item.range as { inserting?: vscode.Range; replacing?: vscode.Range };
-    if (insertReplaceRange.replacing instanceof vscode.Range) {
-      return insertReplaceRange.replacing;
+    const rangeObj = item.range as { inserting?: vscode.Range; replacing?: vscode.Range };
+    if (rangeObj.replacing instanceof vscode.Range) {
+      return rangeObj.replacing;
     }
-    if (insertReplaceRange.inserting instanceof vscode.Range) {
-      return insertReplaceRange.inserting;
+    if (rangeObj.inserting instanceof vscode.Range) {
+      return rangeObj.inserting;
     }
   }
 
@@ -32,11 +45,9 @@ function getCompletionSnippet(item: vscode.CompletionItem): vscode.SnippetString
     return new vscode.SnippetString(item.insertText);
   }
 
-  if (item.insertText && typeof item.insertText === 'object' && 'value' in item.insertText) {
-    const value = (item.insertText as { value?: unknown }).value;
-    if (typeof value === 'string') {
-      return new vscode.SnippetString(value);
-    }
+  const insertText = item.insertText as unknown;
+  if (hasSnippetValue(insertText)) {
+    return new vscode.SnippetString(insertText.value);
   }
 
   assert.fail('Completion item should include snippet insert text');
