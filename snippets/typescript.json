@@ -258,6 +258,53 @@
     ],
     "description": "Import bQuery motion module"
   },
+  "bQuery Import Security": {
+    "prefix": "bq-import-security",
+    "body": [
+      "import { sanitize, escapeHtml } from '@bquery/bquery/security';"
+    ],
+    "description": "Import bQuery security helpers"
+  },
+  "bQuery Import Platform": {
+    "prefix": "bq-import-platform",
+    "body": [
+      "import { storage, notifications } from '@bquery/bquery/platform';"
+    ],
+    "description": "Import bQuery platform utilities"
+  },
+  "bQuery Import UI": {
+    "prefix": "bq-import-ui",
+    "body": [
+      "import '@bquery/ui';"
+    ],
+    "description": "Register all @bquery/ui components via side-effect import"
+  },
+  "bQuery Import UI Component": {
+    "prefix": "bq-import-ui-component",
+    "body": [
+      "import '@bquery/ui/components/${1:button}';"
+    ],
+    "description": "Register a single @bquery/ui component entry point"
+  },
+  "bQuery Template Main": {
+    "prefix": "bq-template-main",
+    "body": [
+      "import '@bquery/ui';",
+      "import { createRouter, interceptLinks } from '@bquery/bquery/router';",
+      "",
+      "const router = createRouter({",
+      "  routes: [",
+      "    { path: '/', component: () => import('${1:./pages/home.page}') },",
+      "    { path: '*', component: () => import('${2:./pages/not-found.page}') }",
+      "  ]",
+      "});",
+      "",
+      "interceptLinks();",
+      "",
+      "export default router;"
+    ],
+    "description": "Create a starter bootstrap similar to @bquery/template"
+  },
   "bQuery Linked Signal": {
     "prefix": "bq-linked-signal",
     "body": [

@@ -132,6 +132,22 @@ const BQ_API_COMPLETIONS: ApiCompletion[] = [
     insertText: 'registerBqLink();',
     kind: vscode.CompletionItemKind.Function,
   },
+  {
+    label: 'interceptLinks',
+    detail: 'bQuery: Intercept in-app anchor navigation',
+    documentation:
+      "Intercepts matching anchor clicks and routes them through the SPA router instead of triggering a full page reload.\n\n**Module:** `@bquery/bquery/router`",
+    insertText: 'interceptLinks();',
+    kind: vscode.CompletionItemKind.Function,
+  },
+  {
+    label: 'isNavigating',
+    detail: 'bQuery: Reactive navigation state',
+    documentation:
+      "A reactive signal that reports whether the router is currently processing a navigation.\n\n**Module:** `@bquery/bquery/router`",
+    insertText: 'isNavigating.value',
+    kind: vscode.CompletionItemKind.Variable,
+  },
   // View
   {
     label: 'mount',
@@ -152,6 +168,23 @@ const BQ_API_COMPLETIONS: ApiCompletion[] = [
     documentation:
       "Creates a reusable view factory from an HTML template string.\n\n**Module:** `@bquery/bquery/view`",
     insertText: ['const template = createTemplate(`', '  ${1:<div bq-text="message"></div>}', '`);'].join('\n'),
+    kind: vscode.CompletionItemKind.Function,
+  },
+  // Core
+  {
+    label: '$',
+    detail: 'bQuery: Select the first matching element',
+    documentation:
+      "Selects the first matching DOM element and wraps it in the core bQuery element helper.\n\n**Module:** `@bquery/bquery/core`",
+    insertText: "\\$('${1:selector}')",
+    kind: vscode.CompletionItemKind.Function,
+  },
+  {
+    label: '$$',
+    detail: 'bQuery: Select all matching elements',
+    documentation:
+      "Selects all matching DOM elements and wraps them in a bQuery collection for chained operations.\n\n**Module:** `@bquery/bquery/core`",
+    insertText: "\\$\\$('${1:selector}')",
     kind: vscode.CompletionItemKind.Function,
   },
   // Reactive
@@ -265,6 +298,43 @@ const BQ_API_COMPLETIONS: ApiCompletion[] = [
       '});',
     ].join('\n'),
     kind: vscode.CompletionItemKind.Function,
+  },
+  // Security
+  {
+    label: 'sanitize',
+    detail: 'bQuery: Sanitize potentially unsafe HTML',
+    documentation:
+      "Sanitizes HTML before rendering user-controlled or untrusted markup.\n\n**Module:** `@bquery/bquery/security`",
+    insertText: 'sanitize(${1:html});',
+    kind: vscode.CompletionItemKind.Function,
+  },
+  {
+    label: 'escapeHtml',
+    detail: 'bQuery: Escape HTML special characters',
+    documentation:
+      "Escapes a string for safe HTML text output without interpreting markup.\n\n**Module:** `@bquery/bquery/security`",
+    insertText: 'escapeHtml(${1:text});',
+    kind: vscode.CompletionItemKind.Function,
+  },
+  // Platform
+  {
+    label: 'storage',
+    detail: 'bQuery: Access browser storage adapters',
+    documentation:
+      "Provides typed helpers for local, session, memory, and IndexedDB-backed storage adapters.\n\n**Module:** `@bquery/bquery/platform`",
+    insertText: "storage.local('${1:key}', ${2:initialValue});",
+    kind: vscode.CompletionItemKind.Variable,
+  },
+  {
+    label: 'notifications',
+    detail: 'bQuery: Browser notification helper',
+    documentation:
+      "Wraps the Web Notifications API with helpers for support checks, permission requests, and sending notifications.\n\n**Module:** `@bquery/bquery/platform`",
+    insertText: [
+      'await notifications.requestPermission();',
+      "notifications.send('${1:Title}', { body: '${2:Done}' });",
+    ].join('\n'),
+    kind: vscode.CompletionItemKind.Variable,
   },
 ];
 

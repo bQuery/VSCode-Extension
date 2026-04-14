@@ -1,6 +1,58 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 
+function getCompletionLabel(item: vscode.CompletionItem): string {
+  return typeof item.label === 'string' ? item.label : item.label.label;
+}
+
+function hasSnippetValue(
+  value: unknown
+): value is {
+  value: string;
+} {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'value' in value &&
+    typeof value.value === 'string'
+  );
+}
+
+function getCompletionRange(item: vscode.CompletionItem): vscode.Range {
+  if (item.range instanceof vscode.Range) {
+    return item.range;
+  }
+
+  if (item.range) {
+    const rangeObj = item.range as { inserting?: vscode.Range; replacing?: vscode.Range };
+    if (rangeObj.replacing instanceof vscode.Range) {
+      return rangeObj.replacing;
+    }
+    if (rangeObj.inserting instanceof vscode.Range) {
+      return rangeObj.inserting;
+    }
+  }
+
+  assert.fail('Completion item should include a range');
+}
+
+function getCompletionSnippet(item: vscode.CompletionItem): vscode.SnippetString {
+  if (item.insertText instanceof vscode.SnippetString) {
+    return item.insertText;
+  }
+
+  if (typeof item.insertText === 'string') {
+    return new vscode.SnippetString(item.insertText);
+  }
+
+  const insertText: unknown = item.insertText;
+  if (hasSnippetValue(insertText)) {
+    return new vscode.SnippetString(insertText.value);
+  }
+
+  assert.fail('Completion item should include snippet insert text');
+}
+
 suite('bQuery Extension Test Suite', () => {
   test('Extension should be present', () => {
     const extension = vscode.extensions.getExtension('bquery.bquery');
@@ -59,6 +111,78 @@ suite('bQuery Extension Test Suite', () => {
         : item.label.label.startsWith('bq-')
     );
     assert.ok(bqItems.length > 0, 'Should include bq-* directive completions');
+
+    await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
+  });
+
+  test('HTML completion provider should provide @bquery/ui component tags in tag-name context', async () => {
+    const doc = await vscode.workspace.openTextDocument({
+      language: 'html',
+      content: '<bq',
+    });
+    await vscode.window.showTextDocument(doc);
+    const position = new vscode.Position(0, doc.lineAt(0).text.length);
+
+    const completions = await vscode.commands.executeCommand<vscode.CompletionList>(
+      'vscode.executeCompletionItemProvider',
+      doc.uri,
+      position
+    );
+
+    assert.ok(completions, 'Should return completions');
+
+    const labels = new Set(
+      completions.items.map((item) =>
+        typeof item.label === 'string' ? item.label : item.label.label
+      )
+    );
+
+    assert.ok(labels.has('bq-button'), 'Should include the bq-button component');
+    assert.ok(labels.has('bq-input'), 'Should include the bq-input component');
+    assert.ok(labels.has('bq-dialog'), 'Should include the bq-dialog component');
+
+    await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
+  });
+
+  test('HTML completion provider should not provide @bquery/ui component tags for plain <b prefixes', async () => {
+    const doc = await vscode.workspace.openTextDocument({
+      language: 'html',
+      content: '<b',
+    });
+    await vscode.window.showTextDocument(doc);
+    const position = new vscode.Position(0, doc.lineAt(0).text.length);
+
+    const completions = await vscode.commands.executeCommand<vscode.CompletionList>(
+      'vscode.executeCompletionItemProvider',
+      doc.uri,
+      position
+    );
+
+    assert.ok(completions, 'Should return completions');
+
+    const bQueryComponentLabels = new Set(
+      completions.items
+        .filter((item) => item.detail === 'bQuery UI component')
+        .map((item) =>
+          typeof item.label === 'string' ? item.label : item.label.label
+        )
+    );
+    const bQueryDirectiveLabels = new Set(
+      completions.items
+        .filter((item) => item.detail === 'bQuery directive')
+        .map((item) =>
+          typeof item.label === 'string' ? item.label : item.label.label
+        )
+    );
+
+    assert.ok(!bQueryComponentLabels.has('bq-button'), 'Should not include bq-button for plain <b prefixes');
+    assert.ok(!bQueryComponentLabels.has('bq-input'), 'Should not include bq-input for plain <b prefixes');
+    assert.ok(!bQueryComponentLabels.has('bq-dialog'), 'Should not include bq-dialog for plain <b prefixes');
+    assert.strictEqual(
+      bQueryDirectiveLabels.size,
+      0,
+      'Should not include bQuery directive completions while typing an HTML tag name'
+    );
 
     await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
   });
@@ -190,7 +314,7 @@ suite('bQuery Extension Test Suite', () => {
     await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
   });
 
-  test('TS completion provider should include key bQuery 1.7.0 API completions', async () => {
+  test('TS completion provider should include key bQuery 1.9.0 ecosystem API completions', async () => {
     const doc = await vscode.workspace.openTextDocument({
       language: 'typescript',
       content: 'bq',
@@ -223,8 +347,57 @@ suite('bQuery Extension Test Suite', () => {
     assert.ok(labels.has('useEffect'), 'Should include the useEffect completion');
     assert.ok(labels.has('useRoute'), 'Should include the useRoute completion');
     assert.ok(labels.has('registerBqLink'), 'Should include the registerBqLink completion');
+    assert.ok(labels.has('interceptLinks'), 'Should include the interceptLinks completion');
+    assert.ok(labels.has('sanitize'), 'Should include the sanitize completion');
+    assert.ok(labels.has('storage'), 'Should include the storage completion');
+    assert.ok(labels.has('notifications'), 'Should include the notifications completion');
 
     await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
+  });
+
+  test('TS completion provider should insert literal $ characters for $ and $$ selector completions', async () => {
+    const assertSelectorCompletionInsertion = async (
+      label: string,
+      expectedText: string
+    ): Promise<void> => {
+      const doc = await vscode.workspace.openTextDocument({
+        language: 'typescript',
+        content: 'bq',
+      });
+      try {
+        const editor = await vscode.window.showTextDocument(doc);
+        const position = new vscode.Position(0, 2);
+
+        const completions = await vscode.commands.executeCommand<vscode.CompletionList>(
+          'vscode.executeCompletionItemProvider',
+          doc.uri,
+          position
+        );
+
+        assert.ok(completions, 'Should return completions');
+        const completion = completions.items.find((item) => getCompletionLabel(item) === label);
+        if (!completion) {
+          assert.fail(`Should include the ${label} completion`);
+        }
+
+        const didInsert = await editor.insertSnippet(
+          getCompletionSnippet(completion),
+          getCompletionRange(completion)
+        );
+
+        assert.ok(didInsert, `Should apply the ${label} completion`);
+        assert.strictEqual(
+          doc.getText(),
+          expectedText,
+          `Should insert literal ${label} selector text`
+        );
+      } finally {
+        await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
+      }
+    };
+
+    await assertSelectorCompletionInsertion('$', "$('selector')");
+    await assertSelectorCompletionInsertion('$$', "$$('selector')");
   });
 
   test('TS completion provider should not provide completions inside strings', async () => {
