@@ -114,6 +114,7 @@ suite('bQuery Extension Test Suite', () => {
       )
     );
 
+    assert.ok(labels.has('b'), 'Should continue to include the native HTML <b> tag suggestion');
     assert.ok(!labels.has('bq-button'), 'Should not include bq-button for plain <b prefixes');
     assert.ok(!labels.has('bq-input'), 'Should not include bq-input for plain <b prefixes');
     assert.ok(!labels.has('bq-dialog'), 'Should not include bq-dialog for plain <b prefixes');
