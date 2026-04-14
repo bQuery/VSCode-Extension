@@ -1,6 +1,6 @@
 # bQuery for VSCode
 
-A VSCode Extension to improve the developer experience when working with [@bquery/bquery](https://github.com/bQuery/bQuery), especially the component, router and view system.
+A VSCode Extension to improve the developer experience across the bQuery ecosystem, including [@bquery/bquery](https://github.com/bQuery/bQuery), [@bquery/ui](https://github.com/bQuery/ui), [@bquery/template](https://github.com/bQuery/template), and [@bquery/setup](https://github.com/bQuery/setup).
 
 ## Features
 
@@ -40,6 +40,11 @@ Type `bq-` to see all available snippets.
 | `bq-import-store` | Import store module |
 | `bq-import-core` | Import core selectors |
 | `bq-import-motion` | Import motion module |
+| `bq-import-security` | Import security helpers |
+| `bq-import-platform` | Import platform utilities |
+| `bq-import-ui` | Register all `@bquery/ui` components |
+| `bq-import-ui-component` | Register a single `@bquery/ui` component |
+| `bq-template-main` | Create a `@bquery/template`-style bootstrap |
 | `bq-import-a11y` | Import the new `@bquery/bquery/a11y` entry point |
 | `bq-import-forms` | Import the new `@bquery/bquery/forms` entry point |
 | `bq-import-i18n` | Import the new `@bquery/bquery/i18n` entry point |
@@ -68,16 +73,21 @@ Type `bq-` to see all available snippets.
 | `bq-app` | Full app template with view bindings |
 | `bq-for-template` | List rendering template |
 | `bq-counter` | Counter template with reactive bindings |
+| `bq-ui-button` | Insert an `@bquery/ui` button component |
+| `bq-ui-input` | Insert an `@bquery/ui` input component |
+| `bq-ui-alert` | Insert an `@bquery/ui` alert component |
+| `bq-ui-card` | Insert an `@bquery/ui` card component |
+| `bq-ui-dialog` | Insert an `@bquery/ui` dialog component |
 
 ### IntelliSense Completions
 
-- **HTML**: Auto-complete bQuery view directives (`bq-text`, `bq-if`, `bq-for`, `bq-on:event`, `bq-model`, `bq-class`, `bq-style`, `bq-show`, `bq-html`, `bq-bind:attr`, `bq-ref`) when typing inside HTML tags.
-- **TypeScript/JavaScript**: Auto-complete bQuery API functions (`component`, `bool`, `useSignal`, `useComputed`, `useEffect`, `createRouter`, `useRoute`, `registerBqLink`, `mount`, `signal`, `computed`, `watch`, `linkedSignal`, `createStore`, and more) with documentation and snippet insertion.
+- **HTML**: Auto-complete bQuery view directives (`bq-text`, `bq-if`, `bq-for`, `bq-on:event`, `bq-model`, `bq-class`, `bq-style`, `bq-show`, `bq-html`, `bq-bind:attr`, `bq-ref`) and `@bquery/ui` component tags such as `bq-button`, `bq-input`, `bq-card`, and `bq-dialog`.
+- **TypeScript/JavaScript**: Auto-complete bQuery API functions (`component`, `bool`, `useSignal`, `useComputed`, `useEffect`, `createRouter`, `interceptLinks`, `sanitize`, `storage`, `notifications`, `createStore`, and more) with documentation and snippet insertion.
 
 ## Requirements
 
 - VSCode 1.85.0 or later
-- A project using [@bquery/bquery](https://www.npmjs.com/package/@bquery/bquery)
+- A project using [@bquery/bquery](https://www.npmjs.com/package/@bquery/bquery), [@bquery/ui](https://www.npmjs.com/package/@bquery/ui), or a starter created with [@bquery/setup](https://github.com/bQuery/setup)
 
 ## License
 

@@ -1,7 +1,7 @@
 {
   "name": "bquery",
   "displayName": "bQuery",
-  "description": "A VSCode Extension to improve the developer experience when working with @bquery/bquery, especially the component, router and view system.",
+  "description": "A VSCode Extension to improve the developer experience across the bQuery ecosystem, including @bquery/bquery, @bquery/ui, @bquery/template, and @bquery/setup.",
   "version": "0.1.0",
   "publisher": "bquery",
   "license": "MIT",
@@ -25,7 +25,9 @@
     "reactive",
     "dom",
     "router",
-    "view"
+    "view",
+    "ui",
+    "starter"
   ],
   "activationEvents": [
     "onLanguage:typescript",

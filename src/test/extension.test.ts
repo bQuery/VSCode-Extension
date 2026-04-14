@@ -63,6 +63,35 @@ suite('bQuery Extension Test Suite', () => {
     await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
   });
 
+  test('HTML completion provider should provide @bquery/ui component tags in tag-name context', async () => {
+    const doc = await vscode.workspace.openTextDocument({
+      language: 'html',
+      content: '<bq',
+    });
+    await vscode.window.showTextDocument(doc);
+    const position = new vscode.Position(0, doc.lineAt(0).text.length);
+
+    const completions = await vscode.commands.executeCommand<vscode.CompletionList>(
+      'vscode.executeCompletionItemProvider',
+      doc.uri,
+      position
+    );
+
+    assert.ok(completions, 'Should return completions');
+
+    const labels = new Set(
+      completions.items.map((item) =>
+        typeof item.label === 'string' ? item.label : item.label.label
+      )
+    );
+
+    assert.ok(labels.has('bq-button'), 'Should include the bq-button component');
+    assert.ok(labels.has('bq-input'), 'Should include the bq-input component');
+    assert.ok(labels.has('bq-dialog'), 'Should include the bq-dialog component');
+
+    await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
+  });
+
   test('HTML completion provider should not provide bq directives inside closing tags', async () => {
     const doc = await vscode.workspace.openTextDocument({
       language: 'html',
@@ -190,7 +219,7 @@ suite('bQuery Extension Test Suite', () => {
     await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
   });
 
-  test('TS completion provider should include key bQuery 1.7.0 API completions', async () => {
+  test('TS completion provider should include key bQuery 1.9.0 ecosystem API completions', async () => {
     const doc = await vscode.workspace.openTextDocument({
       language: 'typescript',
       content: 'bq',
@@ -223,6 +252,10 @@ suite('bQuery Extension Test Suite', () => {
     assert.ok(labels.has('useEffect'), 'Should include the useEffect completion');
     assert.ok(labels.has('useRoute'), 'Should include the useRoute completion');
     assert.ok(labels.has('registerBqLink'), 'Should include the registerBqLink completion');
+    assert.ok(labels.has('interceptLinks'), 'Should include the interceptLinks completion');
+    assert.ok(labels.has('sanitize'), 'Should include the sanitize completion');
+    assert.ok(labels.has('storage'), 'Should include the storage completion');
+    assert.ok(labels.has('notifications'), 'Should include the notifications completion');
 
     await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
   });

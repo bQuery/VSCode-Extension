@@ -98,5 +98,47 @@
       "</div>"
     ],
     "description": "Create a bQuery counter template with reactive bindings"
+  },
+  "bQuery UI Button": {
+    "prefix": "bq-ui-button",
+    "body": [
+      "<bq-button variant=\"${1|primary,secondary,ghost|}\">${2:Save changes}</bq-button>"
+    ],
+    "description": "Insert an @bquery/ui button component"
+  },
+  "bQuery UI Input": {
+    "prefix": "bq-ui-input",
+    "body": [
+      "<bq-input label=\"${1:Email}\" type=\"${2|text,email,password,search|}\" placeholder=\"${3:you@example.com}\"></bq-input>"
+    ],
+    "description": "Insert an @bquery/ui input component"
+  },
+  "bQuery UI Alert": {
+    "prefix": "bq-ui-alert",
+    "body": [
+      "<bq-alert variant=\"${1|info,success,warning,danger|}\" title=\"${2:Notice}\">",
+      "  ${3:Your changes have been saved.}",
+      "</bq-alert>"
+    ],
+    "description": "Insert an @bquery/ui alert component"
+  },
+  "bQuery UI Card": {
+    "prefix": "bq-ui-card",
+    "body": [
+      "<bq-card>",
+      "  <h3 slot=\"header\">${1:Overview}</h3>",
+      "  <p>${2:Card content}</p>",
+      "</bq-card>"
+    ],
+    "description": "Insert an @bquery/ui card component"
+  },
+  "bQuery UI Dialog": {
+    "prefix": "bq-ui-dialog",
+    "body": [
+      "<bq-dialog ${1:open}>",
+      "  <p>${2:Confirm action?}</p>",
+      "</bq-dialog>"
+    ],
+    "description": "Insert an @bquery/ui dialog component"
   }
 }
