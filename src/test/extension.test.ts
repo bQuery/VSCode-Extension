@@ -92,6 +92,33 @@ suite('bQuery Extension Test Suite', () => {
     await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
   });
 
+  test('HTML completion provider should not provide @bquery/ui component tags for plain <b prefixes', async () => {
+    const doc = await vscode.workspace.openTextDocument({
+      language: 'html',
+      content: '<b',
+    });
+    await vscode.window.showTextDocument(doc);
+    const position = new vscode.Position(0, doc.lineAt(0).text.length);
+
+    const completions = await vscode.commands.executeCommand<vscode.CompletionList>(
+      'vscode.executeCompletionItemProvider',
+      doc.uri,
+      position
+    );
+
+    assert.ok(completions, 'Should return completions');
+
+    const labels = new Set(
+      completions.items.map((item) =>
+        typeof item.label === 'string' ? item.label : item.label.label
+      )
+    );
+
+    assert.ok(!labels.has('bq-button'), 'Should not include @bquery/ui component tags for plain <b prefixes');
+
+    await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
+  });
+
   test('HTML completion provider should not provide bq directives inside closing tags', async () => {
     const doc = await vscode.workspace.openTextDocument({
       language: 'html',

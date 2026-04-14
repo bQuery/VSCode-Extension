@@ -271,11 +271,7 @@ export function registerHtmlCompletionProvider(context: vscode.ExtensionContext)
         const tagNamePrefix = extractTagNamePrefix(textUpToCursor);
         if (tagNamePrefix) {
           const lowerTagPrefix = tagNamePrefix.toLowerCase();
-          if (
-            lowerTagPrefix === 'b' ||
-            lowerTagPrefix === 'bq' ||
-            lowerTagPrefix.startsWith('bq-')
-          ) {
+          if (lowerTagPrefix === 'bq' || lowerTagPrefix.startsWith('bq-')) {
             return BQ_UI_COMPONENTS.map((component) => {
               const item = new vscode.CompletionItem(
                 component.name,
