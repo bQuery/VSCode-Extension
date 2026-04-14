@@ -366,7 +366,9 @@ suite('bQuery Extension Test Suite', () => {
 
       assert.ok(completions, 'Should return completions');
       const completion = completions.items.find((item) => getCompletionLabel(item) === selectorCase.label);
-      assert.ok(completion, `Should include the ${selectorCase.label} completion`);
+      if (!completion) {
+        assert.fail(`Should include the ${selectorCase.label} completion`);
+      }
 
       const didInsert = await editor.insertSnippet(
         getCompletionSnippet(completion),
