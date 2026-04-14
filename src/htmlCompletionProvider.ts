@@ -268,7 +268,7 @@ export function registerHtmlCompletionProvider(context: vscode.ExtensionContext)
           return [];
         }
 
-        const tagNamePrefix = getOpeningTagNamePrefix(textUpToCursor);
+        const tagNamePrefix = extractTagNamePrefix(textUpToCursor);
         if (tagNamePrefix) {
           const lowerTagPrefix = tagNamePrefix.toLowerCase();
           if (
@@ -293,7 +293,7 @@ export function registerHtmlCompletionProvider(context: vscode.ExtensionContext)
         }
 
         // Only offer completions when the attribute prefix looks like a bQuery directive
-        const attrPrefix = getAttributePrefix(textUpToCursor);
+        const attrPrefix = extractAttributePrefix(textUpToCursor);
         if (!attrPrefix) {
           return [];
         }
@@ -364,12 +364,12 @@ function isInsideHtmlTag(textBeforeCursor: string): boolean {
   return true;
 }
 
-function getOpeningTagNamePrefix(textBeforeCursor: string): string | null {
+function extractTagNamePrefix(textBeforeCursor: string): string | null {
   const tagMatch = textBeforeCursor.match(/<([^\s/>]*)$/);
   return tagMatch ? tagMatch[1] : null;
 }
 
-function getAttributePrefix(textBeforeCursor: string): string {
+function extractAttributePrefix(textBeforeCursor: string): string {
   const attrMatch = textBeforeCursor.match(/[\s<]([^\s=<>"']*)$/);
   return attrMatch ? attrMatch[1] : '';
 }
