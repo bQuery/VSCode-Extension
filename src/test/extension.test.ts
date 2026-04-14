@@ -355,34 +355,36 @@ suite('bQuery Extension Test Suite', () => {
         language: 'typescript',
         content: 'bq',
       });
-      const editor = await vscode.window.showTextDocument(doc);
-      const position = new vscode.Position(0, 2);
+      try {
+        const editor = await vscode.window.showTextDocument(doc);
+        const position = new vscode.Position(0, 2);
 
-      const completions = await vscode.commands.executeCommand<vscode.CompletionList>(
-        'vscode.executeCompletionItemProvider',
-        doc.uri,
-        position
-      );
+        const completions = await vscode.commands.executeCommand<vscode.CompletionList>(
+          'vscode.executeCompletionItemProvider',
+          doc.uri,
+          position
+        );
 
-      assert.ok(completions, 'Should return completions');
-      const completion = completions.items.find((item) => getCompletionLabel(item) === selectorCase.label);
-      if (!completion) {
-        assert.fail(`Should include the ${selectorCase.label} completion`);
+        assert.ok(completions, 'Should return completions');
+        const completion = completions.items.find((item) => getCompletionLabel(item) === selectorCase.label);
+        if (!completion) {
+          assert.fail(`Should include the ${selectorCase.label} completion`);
+        }
+
+        const didInsert = await editor.insertSnippet(
+          getCompletionSnippet(completion),
+          getCompletionRange(completion)
+        );
+
+        assert.ok(didInsert, `Should apply the ${selectorCase.label} completion`);
+        assert.strictEqual(
+          doc.getText(),
+          selectorCase.expectedText,
+          `Should insert literal ${selectorCase.label} selector text`
+        );
+      } finally {
+        await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
       }
-
-      const didInsert = await editor.insertSnippet(
-        getCompletionSnippet(completion),
-        getCompletionRange(completion)
-      );
-
-      assert.ok(didInsert, `Should apply the ${selectorCase.label} completion`);
-      assert.strictEqual(
-        doc.getText(),
-        selectorCase.expectedText,
-        `Should insert literal ${selectorCase.label} selector text`
-      );
-
-      await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
     }
   });
 
