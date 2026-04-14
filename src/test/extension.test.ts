@@ -114,7 +114,9 @@ suite('bQuery Extension Test Suite', () => {
       )
     );
 
-    assert.ok(!labels.has('bq-button'), 'Should not include @bquery/ui component tags for plain <b prefixes');
+    assert.ok(!labels.has('bq-button'), 'Should not include bq-button for plain <b prefixes');
+    assert.ok(!labels.has('bq-input'), 'Should not include bq-input for plain <b prefixes');
+    assert.ok(!labels.has('bq-dialog'), 'Should not include bq-dialog for plain <b prefixes');
 
     await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
   });
