@@ -286,6 +286,8 @@ export function registerHtmlCompletionProvider(context: vscode.ExtensionContext)
               return item;
             });
           }
+
+          return [];
         }
 
         // Only offer completions when the attribute prefix looks like a bQuery directive

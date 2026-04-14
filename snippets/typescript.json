@@ -268,7 +268,7 @@
   "bQuery Import Platform": {
     "prefix": "bq-import-platform",
     "body": [
-      "import { storage, notifications, defineBqueryConfig } from '@bquery/bquery/platform';"
+      "import { storage, notifications } from '@bquery/bquery/platform';"
     ],
     "description": "Import bQuery platform utilities"
   },

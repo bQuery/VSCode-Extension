@@ -176,7 +176,7 @@ const BQ_API_COMPLETIONS: ApiCompletion[] = [
     detail: 'bQuery: Select the first matching element',
     documentation:
       "Selects the first matching DOM element and wraps it in the core bQuery element helper.\n\n**Module:** `@bquery/bquery/core`",
-    insertText: "$('${1:selector}')",
+    insertText: "\\$('${1:selector}')",
     kind: vscode.CompletionItemKind.Function,
   },
   {
@@ -184,7 +184,7 @@ const BQ_API_COMPLETIONS: ApiCompletion[] = [
     detail: 'bQuery: Select all matching elements',
     documentation:
       "Selects all matching DOM elements and wraps them in a bQuery collection for chained operations.\n\n**Module:** `@bquery/bquery/core`",
-    insertText: "$$('${1:selector}')",
+    insertText: "\\$\\$('${1:selector}')",
     kind: vscode.CompletionItemKind.Function,
   },
   // Reactive

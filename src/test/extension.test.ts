@@ -108,16 +108,29 @@ suite('bQuery Extension Test Suite', () => {
 
     assert.ok(completions, 'Should return completions');
 
-    const labels = new Set(
-      completions.items.map((item) =>
-        typeof item.label === 'string' ? item.label : item.label.label
-      )
+    const bQueryComponentLabels = new Set(
+      completions.items
+        .filter((item) => item.detail === 'bQuery UI component')
+        .map((item) =>
+          typeof item.label === 'string' ? item.label : item.label.label
+        )
+    );
+    const bQueryDirectiveLabels = new Set(
+      completions.items
+        .filter((item) => item.detail === 'bQuery directive')
+        .map((item) =>
+          typeof item.label === 'string' ? item.label : item.label.label
+        )
     );
 
-    assert.ok(labels.has('b'), 'Should continue to include the native HTML <b> tag suggestion');
-    assert.ok(!labels.has('bq-button'), 'Should not include bq-button for plain <b prefixes');
-    assert.ok(!labels.has('bq-input'), 'Should not include bq-input for plain <b prefixes');
-    assert.ok(!labels.has('bq-dialog'), 'Should not include bq-dialog for plain <b prefixes');
+    assert.ok(!bQueryComponentLabels.has('bq-button'), 'Should not include bq-button for plain <b prefixes');
+    assert.ok(!bQueryComponentLabels.has('bq-input'), 'Should not include bq-input for plain <b prefixes');
+    assert.ok(!bQueryComponentLabels.has('bq-dialog'), 'Should not include bq-dialog for plain <b prefixes');
+    assert.strictEqual(
+      bQueryDirectiveLabels.size,
+      0,
+      'Should not include bQuery directive completions while typing an HTML tag name'
+    );
 
     await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
   });
