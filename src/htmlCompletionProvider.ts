@@ -246,7 +246,7 @@ const BQ_UI_COMPONENTS: UiComponentInfo[] = [
 ];
 
 /**
- * Registers the HTML completion provider for bQuery view directives.
+ * Registers the HTML completion provider for bQuery view directives and `@bquery/ui` tag names.
  */
 export function registerHtmlCompletionProvider(context: vscode.ExtensionContext): void {
   const provider = vscode.languages.registerCompletionItemProvider(
