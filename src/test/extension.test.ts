@@ -23,7 +23,7 @@ function getCompletionRange(item: vscode.CompletionItem): vscode.Range {
     return item.range;
   }
 
-  if (item.range && typeof item.range === 'object') {
+  if (item.range) {
     const rangeObj = item.range as { inserting?: vscode.Range; replacing?: vscode.Range };
     if (rangeObj.replacing instanceof vscode.Range) {
       return rangeObj.replacing;
@@ -45,7 +45,7 @@ function getCompletionSnippet(item: vscode.CompletionItem): vscode.SnippetString
     return new vscode.SnippetString(item.insertText);
   }
 
-  const insertText = item.insertText as unknown;
+  const insertText: unknown = item.insertText;
   if (hasSnippetValue(insertText)) {
     return new vscode.SnippetString(insertText.value);
   }
