@@ -1,6 +1,47 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 
+function getCompletionLabel(item: vscode.CompletionItem): string {
+  return typeof item.label === 'string' ? item.label : item.label.label;
+}
+
+function getCompletionRange(item: vscode.CompletionItem): vscode.Range {
+  if (item.range instanceof vscode.Range) {
+    return item.range;
+  }
+
+  if (item.range && typeof item.range === 'object') {
+    const insertReplaceRange = item.range as { inserting?: vscode.Range; replacing?: vscode.Range };
+    if (insertReplaceRange.replacing instanceof vscode.Range) {
+      return insertReplaceRange.replacing;
+    }
+    if (insertReplaceRange.inserting instanceof vscode.Range) {
+      return insertReplaceRange.inserting;
+    }
+  }
+
+  assert.fail('Completion item should include a range');
+}
+
+function getCompletionSnippet(item: vscode.CompletionItem): vscode.SnippetString {
+  if (item.insertText instanceof vscode.SnippetString) {
+    return item.insertText;
+  }
+
+  if (typeof item.insertText === 'string') {
+    return new vscode.SnippetString(item.insertText);
+  }
+
+  if (item.insertText && typeof item.insertText === 'object' && 'value' in item.insertText) {
+    const value = (item.insertText as { value?: unknown }).value;
+    if (typeof value === 'string') {
+      return new vscode.SnippetString(value);
+    }
+  }
+
+  assert.fail('Completion item should include snippet insert text');
+}
+
 suite('bQuery Extension Test Suite', () => {
   test('Extension should be present', () => {
     const extension = vscode.extensions.getExtension('bquery.bquery');
@@ -301,6 +342,46 @@ suite('bQuery Extension Test Suite', () => {
     assert.ok(labels.has('notifications'), 'Should include the notifications completion');
 
     await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
+  });
+
+  test('TS completion provider should insert literal $ characters for $ and $$ selector completions', async () => {
+    const selectorCases = [
+      { label: '$', expectedText: "$('selector')" },
+      { label: '$$', expectedText: "$$('selector')" },
+    ];
+
+    for (const selectorCase of selectorCases) {
+      const doc = await vscode.workspace.openTextDocument({
+        language: 'typescript',
+        content: 'bq',
+      });
+      const editor = await vscode.window.showTextDocument(doc);
+      const position = new vscode.Position(0, 2);
+
+      const completions = await vscode.commands.executeCommand<vscode.CompletionList>(
+        'vscode.executeCompletionItemProvider',
+        doc.uri,
+        position
+      );
+
+      assert.ok(completions, 'Should return completions');
+      const completion = completions.items.find((item) => getCompletionLabel(item) === selectorCase.label);
+      assert.ok(completion, `Should include the ${selectorCase.label} completion`);
+
+      const didInsert = await editor.insertSnippet(
+        getCompletionSnippet(completion),
+        getCompletionRange(completion)
+      );
+
+      assert.ok(didInsert, `Should apply the ${selectorCase.label} completion`);
+      assert.strictEqual(
+        doc.getText(),
+        selectorCase.expectedText,
+        `Should insert literal ${selectorCase.label} selector text`
+      );
+
+      await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
+    }
   });
 
   test('TS completion provider should not provide completions inside strings', async () => {
