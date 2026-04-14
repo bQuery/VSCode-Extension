@@ -345,12 +345,10 @@ suite('bQuery Extension Test Suite', () => {
   });
 
   test('TS completion provider should insert literal $ characters for $ and $$ selector completions', async () => {
-    const selectorCases = [
-      { label: '$', expectedText: "$('selector')" },
-      { label: '$$', expectedText: "$$('selector')" },
-    ];
-
-    for (const selectorCase of selectorCases) {
+    const assertSelectorCompletionInsertion = async (
+      label: string,
+      expectedText: string
+    ): Promise<void> => {
       const doc = await vscode.workspace.openTextDocument({
         language: 'typescript',
         content: 'bq',
@@ -366,9 +364,9 @@ suite('bQuery Extension Test Suite', () => {
         );
 
         assert.ok(completions, 'Should return completions');
-        const completion = completions.items.find((item) => getCompletionLabel(item) === selectorCase.label);
+        const completion = completions.items.find((item) => getCompletionLabel(item) === label);
         if (!completion) {
-          assert.fail(`Should include the ${selectorCase.label} completion`);
+          assert.fail(`Should include the ${label} completion`);
         }
 
         const didInsert = await editor.insertSnippet(
@@ -376,16 +374,19 @@ suite('bQuery Extension Test Suite', () => {
           getCompletionRange(completion)
         );
 
-        assert.ok(didInsert, `Should apply the ${selectorCase.label} completion`);
+        assert.ok(didInsert, `Should apply the ${label} completion`);
         assert.strictEqual(
           doc.getText(),
-          selectorCase.expectedText,
-          `Should insert literal ${selectorCase.label} selector text`
+          expectedText,
+          `Should insert literal ${label} selector text`
         );
       } finally {
         await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
       }
-    }
+    };
+
+    await assertSelectorCompletionInsertion('$', "$('selector')");
+    await assertSelectorCompletionInsertion('$$', "$$('selector')");
   });
 
   test('TS completion provider should not provide completions inside strings', async () => {
